@@ -1,4 +1,5 @@
 "use client";
+import { navbar } from "@/data/navbar-data";
 import logo from "../../../public/assets/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +22,9 @@ const NavBar = () => {
   return (
     <header
       className={`w-full top-0 z-50 transition-all duration-300 ease-linear ${
-        scrollPosition.scrollY > 200 ? "fixed animate-slide-down bg-white shadow-2xl" : "absolute top-0 left-0 w-full right-0"
+        scrollPosition.scrollY > 200
+          ? "fixed animate-slide-down bg-white shadow-2xl"
+          : "absolute top-0 left-0 w-full right-0"
       }`}
     >
       <div className="container">
@@ -34,7 +37,19 @@ const NavBar = () => {
           </Link>
           <div className="hidden md:block">
             <ul className="flex items-center justify-between gap-5 px-5">
-              <li>
+              {navbar.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    href={item.link}
+                    className={`relative inline-block after:block after:content-[''] after:h-[2px] after:bg-(--color-primary) after:transition-[width] after:duration-300 hover:after:w-full text-(--color-text)/70 text-[18px] font-medium ${
+                      router === item.link ? "after:w-full" : "after:w-0"
+                    }`}
+                  >
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
+              {/* <li>
                 <Link
                   href="/"
                   className={`relative inline-block after:block after:content-[''] after:h-[2px] after:bg-(--color-primary) after:transition-[width] after:duration-300 hover:after:w-full text-(--color-text)/70 text-[18px] font-medium ${
@@ -73,7 +88,7 @@ const NavBar = () => {
                 >
                   Contact Us
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div className="">
