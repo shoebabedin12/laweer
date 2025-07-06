@@ -1,4 +1,4 @@
-[
+export const blogData = [
     {
       "question": "What is useState and how does it work in React?",
       "answer": "useState is a React Hook that allows you to add state to functional components. It returns an array with two elements: the current state value and a function to update it. When the update function is called, the component re-renders with the new state.",
