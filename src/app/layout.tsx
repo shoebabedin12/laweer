@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Mulish, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/Header/NavBar";
 import Footer from "@/components/Footer/Footer";
 
-const geistSans = Geist({
+const mulish = Mulish({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plus_jakarta_sans = Plus_Jakarta_Sans({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${mulish.variable} ${plus_jakarta_sans.variable} font-mulish`}
       >
         <NavBar />
         {children}

@@ -1,4 +1,4 @@
-export var layerData = [
+export const layerData = [
   {
     "id": 1,
     "name": "Advocate Awlad Hossain",
