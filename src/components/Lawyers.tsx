@@ -1,26 +1,23 @@
 "use client";
 import LawyerCard from "./LawyerCard";
-import { FaArrowDown } from "react-icons/fa";
-import { FaArrowUp } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import Counter from "./Counter";
 import { LawyeersPropTypes, LawyerDataType } from "@/types/DataTypes";
+import Link from "next/link";
 
 const Lawyers = (props: LawyeersPropTypes) => {
-  const { layerData } = props;
+  const { layerData, showingOption } = props;
   const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    if (showAll) {
+    if (showingOption) {
+      setDisplayLawyers(layerData.slice(0, showingOption));
+    }else{
       setDisplayLawyers(layerData);
-    } else {
-      setDisplayLawyers(layerData.slice(0, 6));
     }
-  }, [layerData, showAll]);
+  }, [layerData]);
 
   return (
-    <div className="py-12">
+    <div className="mb-[100px]">
       <div className="grid grid-cols-12 gap-4">
         <div className="col-span-12 heading-section text-center">
           <h2 className="font-mulish font-extrabold text-[40px] text-(--color-text)">Our Best Lawyers</h2>
@@ -34,20 +31,15 @@ const Lawyers = (props: LawyeersPropTypes) => {
           </div>
         </div>
       </div>
-      {displayLawyers && <div className="flex items-center justify-center my-10">
-        <button
-          onClick={() => {
-            setShowAll((prv) => !prv)
-            if (showAll) window.scrollTo(0, 600)
-          }   
-        }
-          className="group flex items-center justify-center gap-2 rounded-full font-bold bg-(--color-primary) text-white py-[22px] px-[30px] text-[18px] cursor-pointer"
+      {showingOption && <div className="flex items-center justify-center my-10">
+        <Link
+          href="/lawyers-profile"
+          className="flex items-center justify-center gap-2 rounded-full font-bold bg-(--color-primary) text-white py-[22px] px-[30px] text-[18px] cursor-pointer"
         >
-          {showAll ? <><FaArrowUp className="group-hover:animate-bounce"/>Show Less</> : <><FaArrowDown className="group-hover:animate-bounce"/>Show All Lawyers</>}
-        </button>
+         Show More Lawyers
+        </Link>
       </div>
       }
-      <Counter/>
     </div>
   );
 };

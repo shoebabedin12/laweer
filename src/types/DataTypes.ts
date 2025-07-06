@@ -12,6 +12,7 @@ export type LawyerDataType = {
 
 export type LawyeersPropTypes = {
   layerData: LawyerDataType[];
+  showingOption?:number;
 };
 export type LawyeerDetailsPropTypes = {
   data: LawyerDataType;
