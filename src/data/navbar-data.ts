@@ -11,9 +11,5 @@ export const navbar = [
         id: 2,
         title: 'Booking form',
         link: '/booking-form'
-    },{
-        id: 3,
-        title: 'Contact Us',
-        link: '/contact-us'
-    },
+    }
 ]

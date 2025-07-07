@@ -1,19 +1,25 @@
 @import "tailwindcss";
 
-@layer base {
-}
+@layer base {}
+
 @theme {
   /* font-family */
   --font-mulish: "Mulish", "sans-serif";
   --font-plus_jakarta_sans: "Plus Jakarta Sans", sans-serif;
-  /* screen breakpoint */
-  --breakpoint-xs: 30em; /* 480px */
-  --breakpoint-sm: 40em; /* 640px */
-  --breakpoint-md: 48em; /* 768px */
-  --breakpoint-lg: 64em; /* 1024px */
-  --breakpoint-xl: 80em; /* 1280px */
-  --breakpoint-2xl: 96em; /* 1536px */
-  --breakpoint-3xl: 120em; /* 1920px */
+  --breakpoint-xs: 480px;
+  /* 30em */
+  --breakpoint-sm: 640px;
+  /* 40em */
+  --breakpoint-md: 768px;
+  /* 48em */
+  --breakpoint-lg: 1024px;
+  /* 64em */
+  --breakpoint-xl: 1280px;
+  /* 80em */
+  --breakpoint-2xl: 1536px;
+  /* 96em */
+  --breakpoint-3xl: 1920px;
+  /* 120em */
   /* color */
   --color-primary: #0ea106;
   --color-text: #0f0f0f;
@@ -26,43 +32,60 @@
 @layer utilities {
   .container {
     margin-inline: auto;
-    padding-inline: 2rem;
-    width: 100%;
+    padding-inline: 16px
+  }
 
-    @media (min-width: 30em) {
-      max-width: 30em;
-    }
-    @media (min-width: 40em) {
-      max-width: 40em;
-    }
-    @media (min-width: 48em) {
-      max-width: 48em;
-    }
-    @media (min-width: 64em) {
-      max-width: 64em;
-    }
-    @media (min-width: 80em) {
-      max-width: 80em;
-    }
-    @media (min-width: 96em) {
-      max-width: 96em;
-    }
-    @media (min-width: 120em) {
-      max-width: 120em;
+  @media (min-width: 40rem) {
+    .container {
+      max-width: none
     }
   }
 
+  @media (min-width: 600px) {
+    .container {
+      max-width: 600px;
+      padding-inline: 16px
+    }
+  }
+
+  @media (min-width: 728px) {
+    .container {
+      max-width: 728px
+    }
+  }
+
+  @media (min-width: 996px) {
+    .container {
+      max-width: 996px;
+      padding-inline: 16px
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .container {
+      max-width: 1200px
+    }
+  }
+
+  @media (min-width: 1480px) {
+    .container {
+      max-width: 1480px;
+      padding-inline: 16px
+    }
+  }
 }
 
 
 .animate-slide-down {
   animation: goDown 0.5s ease-out forwards;
 }
+
 @keyframes goDown {
   0% {
-      transform: translateY(-100%);
-    }
-    100% {
-      transform: translateY(0);
-    }
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }

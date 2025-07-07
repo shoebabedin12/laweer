@@ -36,8 +36,8 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
 
   return (
     <>
-      <div className="col-span-6">
-        <div className="group bg-base-100 border border-(--color-text)/15 hover:shadow-md rounded-2xl md:mx-0 mx-auto flex p-6 gap-x-16 items-center transition-all duration-300 ease-linear">
+      <div className="col-span-12 md:col-span-6">
+        <div className="group bg-base-100 border border-(--color-text)/15 hover:shadow-md rounded-2xl md:mx-0 mx-auto flex p-6 gap-x-10 items-center transition-all duration-300 ease-linear">
           <figure className="rounded-2xl max-w-[159px] h-[158px] overflow-hidden">
             <Image
               className="w-full h-full object-cover rounded-2xl"
