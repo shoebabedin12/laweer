@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@layer base {}
-
 @theme {
   /* font-family */
   --font-mulish: "Mulish", "sans-serif";
