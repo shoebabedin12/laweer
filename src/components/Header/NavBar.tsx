@@ -92,12 +92,11 @@ const NavBar = () => {
             </ul>
           </div>
           <div className="">
-            <Link
-              href={"/"}
+            <span
               className="btn rounded-full font-bold bg-[#0EA106] text-white py-[15px] px-[30px] text-[18px]"
             >
-              Register/Login
-            </Link>
+              <Link href={'/signup'} className="relative inline-block after:block after:content-[''] after:h-[2px] after:bg-white after:transition-[width] after:duration-300 hover:after:w-full after:w-0">Register</Link> | <Link href={'/signin'} className="relative inline-block after:block after:content-[''] after:h-[2px] after:bg-white after:transition-[width] after:duration-300 hover:after:w-full after:w-0">Login</Link>
+            </span>
           </div>
         </div>
       </div>
