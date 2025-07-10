@@ -1,6 +1,6 @@
 import { layerData } from "@/data/lawyer-data";
 import React from "react";
-import Lawyers from "../../components/Lawyers";
+import Lawyers from "../../../components/Lawyers";
 
 const LawyersProfile = () => {
 

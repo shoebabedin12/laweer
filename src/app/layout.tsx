@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Mulish, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import NavBar from "@/components/Header/NavBar";
-import Footer from "@/components/Footer/Footer";
+import { ToastContainer } from "react-toastify";
 
 const mulish = Mulish({
   display: 'swap',
@@ -33,9 +32,8 @@ export default function RootLayout({
       <body
         className={`${mulish.variable} ${plus_jakarta_sans.variable} font-mulish`}
       >
-        <NavBar />
+        <ToastContainer />
         {children}
-        <Footer />
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { BookingFormProps } from "@/types/BookingFormTypes";
+import { BookingFormProps } from "@/types/FormTypes";
 import { useFormik } from "formik";
 import { FiLoader } from "react-icons/fi";
 import * as Yup from "yup";
