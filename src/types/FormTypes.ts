@@ -11,6 +11,7 @@ export type FormProps = {
     email: string;
     role?: string;
     password: string;
+    confirm_password?: string;
 }
 // ✅ Type for message state
 export type MessageState = {

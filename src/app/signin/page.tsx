@@ -1,21 +1,24 @@
-'use client';
+"use client";
 
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { FiLoader } from 'react-icons/fi';
-import Link from 'next/link';
-import { FormProps } from '@/types/FormTypes';
-import { toast } from 'react-toastify';
-import { useState } from 'react';
-import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { FiLoader } from "react-icons/fi";
+import Link from "next/link";
+import { FormProps } from "@/types/FormTypes";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
 
 // ✅ Yup validation schema
 const LoginSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  password: Yup.string().min(6, 'At least 6 characters').required('Password is required'),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .min(6, "At least 6 characters")
+    .required("Password is required"),
 });
 
 export default function LoginPage() {
@@ -23,29 +26,54 @@ export default function LoginPage() {
   const [passwordShow, setPasswordShow] = useState(false);
   const formik = useFormik<FormProps>({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validationSchema: LoginSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const { user } = await signInWithEmailAndPassword(auth, values.email, values.password);
+        const { user } = await signInWithEmailAndPassword(
+          auth,
+          values.email,
+          values.password
+        );
         // ✅ Get Firebase ID token
         const token = await user.getIdToken();
 
         // ✅ Server sets cookie, readable by middleware
-        await fetch('/api/session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetch("/api/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token }),
         });
 
-        toast.success('Logged in successfully!', { position: 'top-right' });
+        // ✅ Get user document from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+
+        if (!userSnap.exists()) {
+          toast.error("User profile not found!", { position: "top-right" });
+          return;
+        }
+
+        const userData = userSnap.data();
+        const role = userData?.role;
+
+        toast.success("Logged in successfully!", { position: "top-right" });
         resetForm();
-        router.push('/admin');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+        // ✅ Redirect based on role
+        if (role === "admin") {
+          router.push("/admin/dashboard");
+        } else if (role === "lawyer") {
+          // Optional: check if profile is completed
+          router.push("/lawyer/setup-profile");
+        } else {
+          router.push("/user/home");
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
-        toast.error(err.message, { position: 'top-right' });
+        toast.error(err.message, { position: "top-right" });
       }
     },
   });
@@ -54,7 +82,10 @@ export default function LoginPage() {
     <div className="my-[100px]">
       <div className="container">
         <div className="shadow-2xl max-w-[600px] mx-auto rounded-2xl py-5 px-8">
-          <form onSubmit={formik.handleSubmit} className="grid grid-cols-12 gap-4">
+          <form
+            onSubmit={formik.handleSubmit}
+            className="grid grid-cols-12 gap-4"
+          >
             <div className="col-span-12 mb-4">
               <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
             </div>
@@ -86,7 +117,7 @@ export default function LoginPage() {
                 <input
                   name="password"
                   placeholder="Password"
-                  type={passwordShow ? 'text' : 'password'}
+                  type={passwordShow ? "text" : "password"}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.password}
@@ -100,7 +131,9 @@ export default function LoginPage() {
                 </div>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-sm mt-1">{formik.errors.password}</div>
+                <div className="text-red-500 text-sm mt-1">
+                  {formik.errors.password}
+                </div>
               )}
             </div>
 
@@ -110,14 +143,21 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-(--color-primary) text-white font-bold text-base leading-[22px] py-[17px] rounded-[65px] text-center flex items-center justify-center cursor-pointer"
               >
-                {formik.isSubmitting ? <FiLoader className="animate-spin" /> : 'LOGIN'}
+                {formik.isSubmitting ? (
+                  <FiLoader className="animate-spin" />
+                ) : (
+                  "LOGIN"
+                )}
               </button>
             </div>
 
             <div className="col-span-12 text-center mt-2">
               <p className="text-sm">
-                Don’t have an account?{' '}
-                <Link href="/signup" className="text-blue-600 underline hover:text-blue-800">
+                Don’t have an account?{" "}
+                <Link
+                  href="/signup"
+                  className="text-blue-600 underline hover:text-blue-800"
+                >
                   Sign up
                 </Link>
               </p>

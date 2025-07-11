@@ -1,25 +1,18 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
-import type { NextAuthOptions, Session } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
+import type { NextAuthOptions, Session } from 'next-auth';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
-// Define custom token and session types
-type ExtendedToken = JWT & {
-  uid?: string;
-  role?: string;
-};
-
+type ExtendedToken = JWT & { uid?: string; role?: string };
 type ExtendedSession = Session & {
   user: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
     uid?: string;
     role?: string;
   };
 };
+
 
 export const authConfig: NextAuthOptions = {
   providers: [
@@ -29,7 +22,7 @@ export const authConfig: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      authorize: async (credentials) => {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
         try {
@@ -52,7 +45,9 @@ export const authConfig: NextAuthOptions = {
     }),
   ],
 
-  session: { strategy: 'jwt' },
+  session: {
+    strategy: 'jwt',
+  },
 
   pages: {
     signIn: '/login',
@@ -69,8 +64,8 @@ export const authConfig: NextAuthOptions = {
 
     async session({ session, token }: { session: ExtendedSession; token: ExtendedToken }) {
       if (session.user) {
-        session.user.role = token.role;
         session.user.uid = token.uid;
+        session.user.role = token.role;
       }
       return session;
     },

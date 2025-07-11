@@ -3,7 +3,7 @@ import { LayoutProps } from "@/types/LayoutTypes";
 
 const Layout = ({ children }: LayoutProps)=> {
   return (
-  <RoleProtectedLayout allowedRole="admin">
+  <RoleProtectedLayout allowedRole="user">
     {children}
   </RoleProtectedLayout>);
 }
