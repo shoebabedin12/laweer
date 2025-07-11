@@ -7,7 +7,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { useFormik } from 'formik';
 import { FiLoader } from "react-icons/fi";
 import * as Yup from "yup";
-import { MessageState, SignFormProps } from '@/types/FormTypes';
+import { FormProps, MessageState } from '@/types/FormTypes';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
@@ -26,7 +26,7 @@ export default function SignupPage() {
   const [message, setMessage] = useState<MessageState>(null);
   const [passwordShow, setPasswordShow] = useState(false);
 
-  const formik = useFormik<SignFormProps>({
+  const formik = useFormik<FormProps>({
     initialValues: {
       name: '',
       email: '',
