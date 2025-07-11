@@ -14,7 +14,7 @@ const Lawyers = (props: LawyeersPropTypes) => {
     }else{
       setDisplayLawyers(layerData);
     }
-  }, [layerData]);
+  }, [layerData, showingOption]);
 
   return (
     <div className="mb-[100px]">

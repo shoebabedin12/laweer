@@ -7,6 +7,7 @@ import Counter from "@/components/Counter";
 import Lawyers from "@/components/Lawyers";
 
 export default function Home() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

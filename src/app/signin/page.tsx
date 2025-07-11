@@ -43,6 +43,7 @@ export default function LoginPage() {
         toast.success('Logged in successfully!', { position: 'top-right' });
         resetForm();
         router.push('/admin');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         toast.error(err.message, { position: 'top-right' });
       }

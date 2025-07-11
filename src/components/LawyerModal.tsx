@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/LawyerModal.tsx
 "use client";
 
@@ -13,7 +14,6 @@ const LawyerModal = ({ data, onClose }: any) => {
     id,
     name,
     image,
-    specialization,
     license,
     experience,
     availability,

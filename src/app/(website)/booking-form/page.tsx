@@ -20,7 +20,7 @@ const BookingForm = () => {
       timeSlot: Yup.string().required("Time Slot is required"),
       additionalNotes: Yup.string().required("Additional Notes is required"),
     }),
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values) => {
       alert(JSON.stringify(values, null, 2));
     },
   });

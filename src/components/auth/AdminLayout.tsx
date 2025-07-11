@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [unauthorized, setUnauthorized] = useState(false);
+  const [, setLoading] = useState(true);
+  const [, setUnauthorized] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
