@@ -64,12 +64,12 @@ export default function LoginPage() {
 
         // ✅ Redirect based on role
         if (role === "admin") {
-          router.push("/admin/dashboard");
+          router.push("/admin");
         } else if (role === "lawyer") {
           // Optional: check if profile is completed
-          router.push("/lawyer/setup-profile");
+          router.push("/lawyer");
         } else {
-          router.push("/user/home");
+          router.push("/users");
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {

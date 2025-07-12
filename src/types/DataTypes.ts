@@ -1,15 +1,17 @@
 import { Dispatch, SetStateAction } from "react";
 
 export type LawyerDataType = {
-  id: number;
+  uid: string;
   name: string;
+  email: string;
+  role: "lawyer";
   specialization: string;
-  license: string;
-  experience: string;
-  availability: string[];
-  consultationFee: number;
-  image: string;
-  bio: string;
+  experience: string; // or number if you want to cast
+  description: string;
+  availableDays: string[];
+  availableTimeSlots: string[];
+  profileImage: string; // base64 or URL
+  createdAt?: string;
 };
 
 export type LawyeersPropTypes = {
@@ -31,4 +33,13 @@ export type UserData = {
 export type SidebarProps = {
   showSideNav: boolean;
   setShowSideNav?: Dispatch<SetStateAction<boolean>>;
+  role?: "admin" | "lawyer" | "user";
+}
+
+export interface MessageType {
+  id?: string;
+  senderId: string;
+  receiverId: string;
+  text: string;
+  timestamp: Date;
 }

@@ -11,17 +11,14 @@ const LawyerModal = ({ data, onClose }: any) => {
   const { today, isAvailable } = getTodayAvailabilityStatus(data.availability);
 
   const {
-    id,
+    uid,
     name,
-    image,
-    license,
+    profileImage,
+    specialization,
     experience,
-    availability,
-    consultationFee,
+    availableDays,
   } = data;
 
-  console.log(today);
-  console.log(isAvailable);
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -36,7 +33,7 @@ const LawyerModal = ({ data, onClose }: any) => {
         </div>
         <figure>
           <Image
-            src={image}
+            src={profileImage}
             alt={name}
             loading="lazy"
             width={308}
@@ -50,22 +47,18 @@ const LawyerModal = ({ data, onClose }: any) => {
           </p>
           <h2 className="text-xl font-bold mb-2">{name}</h2>
           <p className="text-sm text-gray-700 mb-1">
-            Criminal Expert {license}
+            {specialization}
           </p>
           <p className="text-sm text-gray-700 mb-5 flex items-center justify-items-start gap-2">
             Availability{" "}
-            {availability?.map((item: any) => (
+            {availableDays?.map((item: any) => (
               <span
-                key={id}
+                key={uid}
                 className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full"
               >
                 {item}
               </span>
             ))}
-          </p>
-          <p className="text-sm text-gray-700 mb-1">
-            Consultation Fee:{" "}
-            <span className="text-primary">Taka : {consultationFee}</span>
           </p>
           <p className="text-sm text-gray-700 mb-5">
             Availability{" "}

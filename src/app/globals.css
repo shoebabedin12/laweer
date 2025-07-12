@@ -48,7 +48,8 @@
 
   @media (min-width: 728px) {
     .container {
-      max-width: 728px
+      max-width: 728px;
+      padding-inline: 16px;
     }
   }
 
@@ -61,7 +62,8 @@
 
   @media (min-width: 1200px) {
     .container {
-      max-width: 1200px
+      max-width: 1200px;
+      padding-inline: 16px
     }
   }
 

@@ -9,7 +9,7 @@ export const navbar = [
         link: '/lawyers-profile'
     },{
         id: 2,
-        title: 'Booking form',
-        link: '/booking-form'
+        title: 'Booking lawyer',
+        link: '/users/appointments'
     }
 ]

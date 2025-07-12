@@ -8,8 +8,7 @@ import React, { useState } from "react";
 import LawyerModal from "./LawyerModal";
 
 const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
-  const { id, image, name, experience, specialization, license, availability } =
-    data;
+ 
   const [selectedLawyer, setSelectedLawyer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -32,9 +31,10 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
     "Friday",
     "Saturday",
   ];
+
   const d = new Date();
   const today = weekday[d.getDay()];
-  const isAvailable = availability.includes(today);
+  const isAvailable = Array.isArray(data.availableDays) && data.availableDays.includes(today);
 
   return (
     <>
@@ -43,8 +43,8 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
           <figure className="rounded-2xl max-w-[159px] h-[158px] overflow-hidden">
             <Image
               className="w-full h-full object-cover rounded-2xl"
-              src={image}
-              alt={name}
+              src={data.profileImage}
+              alt={data.name}
               width={159}
               height={158}
             />
@@ -57,7 +57,7 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
             <div className="flex gap-2 mb-2">
               <span
                 className={`py-[5px] px-3.5 rounded-full text-[12px] font-medium ${
-                  isAvailable
+                  data.availableDays
                     ? "bg-(--color-badge)/10 text-(--color-badge)"
                     : "bg-red-50 text-red-600"
                 }`}
@@ -65,18 +65,15 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
                 {isAvailable ? "Available" : "Not Available"}
               </span>
               <span className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full">
-                {experience}
+                {data.experience}
               </span>
             </div>
             <h2 className="text-(-color-card-title) text-2xl font-extrabold mb-1 truncate">
-              {name}
+              {data.name}
             </h2>
             <div className="text-gray-500 text-sm">
               <p className="font-mulish font-medium text-lg text-(--color-text)/60">
-                {specialization}
-              </p>
-              <p className="font-mulish font-medium text-lg text-(--color-text)/70">
-                &reg; License No: {license}
+                {data.specialization}
               </p>
             </div>
             <div className="mt-4">

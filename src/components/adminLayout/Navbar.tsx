@@ -37,26 +37,26 @@ const Navbar = ({showSideNav, setShowSideNav}: SidebarProps) => {
       <FiMenu onClick={()=> setShowSideNav(!showSideNav)}/>
       <form action="#">
         <div className="form-input">
-          <input type="search" placeholder="Search..." />
-          <button type="submit" className="search-btn">
+          {/* <input type="search" placeholder="Search..." /> */}
+          {/* <button type="submit" className="search-btn">
             <CiSearch />
-          </button>
+          </button> */}
         </div>
       </form>
 
-      <input
+      {/* <input
         type="checkbox"
         className="checkbox"
         id="switch-mode"
         hidden
         checked={darkMode}
         onChange={toggleDarkMode}
-      />
-      <label className="swith-lm" htmlFor="switch-mode">
+      /> */}
+      {/* <label className="swith-lm" htmlFor="switch-mode">
         <BsMoon className="bxs-moon" />
         <BsSun className="bx-sun" />
         <div className="ball"></div>
-      </label>
+      </label> */}
 
       <a
         href="#"

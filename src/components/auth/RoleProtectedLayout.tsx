@@ -5,12 +5,9 @@ import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Sidebar from "../adminLayout/Sidebar";
-import Link from "next/link";
 import "./admin.css";
-import Image from "next/image";
-import { IoIosMenu } from "react-icons/io";
-import { FaBell } from "react-icons/fa";
 import Navbar from "../adminLayout/Navbar";
+import { UserProvider } from "@/context/UserContext";
 
 export default function RoleProtectedLayout({
   children,
@@ -24,6 +21,7 @@ export default function RoleProtectedLayout({
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [showSideNav, setShowSideNav] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -46,7 +44,7 @@ export default function RoleProtectedLayout({
           router.replace(redirectTo);
           return;
         }
-
+        setRole(userRole);
         setLoading(false); // ✅ Passed check
       } catch (error) {
         console.error("Role check failed", error);
@@ -56,17 +54,16 @@ export default function RoleProtectedLayout({
 
     return () => unsubscribe();
   }, [allowedRole, redirectTo, router]);
- 
 
   if (loading) return null; // or show spinner
 
   return (
-    <>
-      <Sidebar showSideNav={showSideNav}/>
+    <UserProvider>
+      <Sidebar showSideNav={showSideNav} role={role}/>
       <section id="content">
-        <Navbar showSideNav={showSideNav} setShowSideNav={setShowSideNav}/>
+        <Navbar showSideNav={showSideNav} setShowSideNav={setShowSideNav} />
         <main>{children}</main>
       </section>
-    </>
+    </UserProvider>
   );
 }
