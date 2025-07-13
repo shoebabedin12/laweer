@@ -1,49 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import LawyerCard from "./LawyerCard";
-import { useEffect, useState } from "react";
-import { LawyeersPropTypes, LawyerDataType } from "@/types/DataTypes";
+import { useEffect } from "react";
+import { LawyeersPropTypes } from "@/types/DataTypes";
 import Link from "next/link";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
 const Lawyers = (props: LawyeersPropTypes) => {
-  const { layerData, showingOption } = props;
-  const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
-
-   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchLawyers = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "users"));
-        const lawyers = snapshot.docs
-          .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter((doc: any) => doc.role === "lawyer");
-
-        if (showingOption) {
-          setDisplayLawyers(lawyers.slice(0, showingOption));
-        } else {
-          setDisplayLawyers(lawyers);
-        }
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch lawyers:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchLawyers();
-  }, [showingOption]);
+  const { data, showingOption, loading } = props;
+ 
 
   useEffect(() => {
     if (showingOption) {
-      setDisplayLawyers(layerData.slice(0, showingOption));
+      data.slice(0, showingOption);
     }else{
-      setDisplayLawyers(layerData);
+      data;
     }
-  }, [layerData, showingOption]);
+  }, [data, showingOption]);
 
   return (
     <div className="mb-[100px]">
@@ -56,8 +28,8 @@ const Lawyers = (props: LawyeersPropTypes) => {
         :
 
         <div className="col-span-12">
-          <div className="grid grid-cols-12 gap-16">
-            {displayLawyers.map((lawyers) => (
+          <div className="grid grid-cols-12 gap-4 lg:gap-16">
+            {data.map((lawyers) => (
               <LawyerCard key={lawyers.uid} data={lawyers}></LawyerCard>
             ))}
           </div>

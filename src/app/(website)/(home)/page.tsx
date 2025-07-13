@@ -5,30 +5,40 @@ import { useEffect, useState } from "react";
 import { getUsers } from "@/lib/firestore";
 import Counter from "@/components/Counter";
 import Lawyers from "@/components/Lawyers";
+import { LawyerDataType } from "@/types/DataTypes";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function Home() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
+  const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
 
-   useEffect(() => {
-    getUsers().then(users => {
-      setUsers(users);
-      setLoading(false);
-    });
+  useEffect(() => {
+    const fetchLawyers = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, "users"));
+        const data = snapshot.docs
+          .map(doc => ({ id: doc.id, ...(doc.data() as Omit<LawyerDataType, 'id'>) }))
+          .filter((doc: LawyerDataType) => doc.role === "lawyer");
+
+        setDisplayLawyers(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch lawyers:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchLawyers();
   }, []);
-
-  if (loading) return <p>Loading...</p>;
 
 
   return (
     <div className="container">
       <Banner />
-      <Lawyers layerData={layerData} showingOption={6}></Lawyers>
+      <Lawyers data={displayLawyers} showingOption={6} loading={loading}/>
       <Counter/>
-       {users.map(user => (
-          <li key={user.id}>{user.name}</li>
-        ))}
     </div>
   );
 }

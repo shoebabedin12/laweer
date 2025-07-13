@@ -61,7 +61,6 @@ const LawyerModal = ({ data, onClose }: any) => {
             ))}
           </p>
           <p className="text-sm text-gray-700 mb-5">
-            Availability{" "}
             <span className={isAvailable ? "text-primary" : "text-red-600"}>
               {isAvailable
                 ? `Available on ${today}`

@@ -10,7 +10,7 @@
   /* 40em */
   --breakpoint-md: 768px;
   /* 48em */
-  --breakpoint-lg: 1024px;
+  --breakpoint-lg: 992px;
   /* 64em */
   --breakpoint-xl: 1280px;
   /* 80em */
@@ -53,9 +53,9 @@
     }
   }
 
-  @media (min-width: 996px) {
+  @media (min-width: 992px) {
     .container {
-      max-width: 996px;
+      max-width: 992px;
       padding-inline: 16px
     }
   }

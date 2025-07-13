@@ -1,6 +1,7 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import type { JWT } from 'next-auth/jwt';
-import type { NextAuthOptions, Session } from 'next-auth';
+import type { Session } from 'next-auth';
+import type { NextAuthOptions } from "next-auth";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
@@ -13,8 +14,7 @@ type ExtendedSession = Session & {
   };
 };
 
-
-export const authConfig: NextAuthOptions = {
+const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Email & Password',
@@ -44,15 +44,12 @@ export const authConfig: NextAuthOptions = {
       },
     }),
   ],
-
   session: {
     strategy: 'jwt',
   },
-
   pages: {
     signIn: '/login',
   },
-
   callbacks: {
     async jwt({ token, user }: { token: ExtendedToken; user?: any }) {
       if (user) {
@@ -61,7 +58,6 @@ export const authConfig: NextAuthOptions = {
       }
       return token;
     },
-
     async session({ session, token }: { session: ExtendedSession; token: ExtendedToken }) {
       if (session.user) {
         session.user.uid = token.uid;
@@ -70,6 +66,7 @@ export const authConfig: NextAuthOptions = {
       return session;
     },
   },
-
-  secret: process.env.NEXTAUTH_SECRET!,
+  secret: process.env.NEXTAUTH_SECRET,
 };
+
+export default authConfig;

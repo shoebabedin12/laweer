@@ -1,22 +1,24 @@
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Dispatch, SetStateAction } from "react";
 
 export type LawyerDataType = {
-  uid: string;
-  name: string;
-  email: string;
-  role: "lawyer";
-  specialization: string;
-  experience: string; // or number if you want to cast
-  description: string;
-  availableDays: string[];
-  availableTimeSlots: string[];
-  profileImage: string; // base64 or URL
+  uid?: string;
+  name?: string;
+  email?: string;
+  specialization?: string;
+  role?: string;
+  experience?: string;
+  description?: string;
+  availableDays?: string[];
+  availableTimeSlots?: string[];
+  profileImage?: string; 
   createdAt?: string;
 };
 
 export type LawyeersPropTypes = {
-  layerData: LawyerDataType[];
+  data: LawyerDataType[];
   showingOption?:number;
+  loading?:Boolean;
 };
 export type LawyeerDetailsPropTypes = {
   data: LawyerDataType;

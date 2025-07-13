@@ -35,25 +35,27 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
   const d = new Date();
   const today = weekday[d.getDay()];
   const isAvailable = Array.isArray(data.availableDays) && data.availableDays.includes(today);
+  
 
   return (
     <>
       <div className="col-span-12 md:col-span-6">
-        <div className="group bg-base-100 border border-(--color-text)/15 hover:shadow-md rounded-2xl md:mx-0 mx-auto flex p-6 gap-x-10 items-center transition-all duration-300 ease-linear">
-          <figure className="rounded-2xl max-w-[159px] h-[158px] overflow-hidden">
-            <Image
-              className="w-full h-full object-cover rounded-2xl"
-              src={data.profileImage}
-              alt={data.name}
-              width={159}
-              height={158}
-            />
-            <span className="relative flex size-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
-              <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
-            </span>
-          </figure>
-          <div className="card-body p-0">
+        <div className="group bg-base-100 border border-(--color-text)/15 hover:shadow-md rounded-2xl grid grid-cols-12 p-6 items-center gap-4 transition-all duration-300 ease-linear">
+          <div className="col-span-12 lg:col-span-4 relative">
+              {isAvailable && <span className="absolute flex size-3 right-0 ">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
+                <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
+              </span>}
+            <div className="rounded-2xl lg:max-w-[159px] w-full h-full lg:h-[158px] overflow-hidden">
+             <Image className="w-full h-full object-cover rounded-2xl"
+                src={data.profileImage || ''}
+                alt={data?.name || "Name"}
+                width={159}
+                height={158}
+              />
+            </div>
+          </div>
+          <div className="col-span-12 lg:col-span-8">
             <div className="flex gap-2 mb-2">
               <span
                 className={`py-[5px] px-3.5 rounded-full text-[12px] font-medium ${
@@ -65,7 +67,7 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
                 {isAvailable ? "Available" : "Not Available"}
               </span>
               <span className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full">
-                {data.experience}
+                {data.experience} years
               </span>
             </div>
             <h2 className="text-(-color-card-title) text-2xl font-extrabold mb-1 truncate">
@@ -76,14 +78,12 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
                 {data.specialization}
               </p>
             </div>
-            <div className="mt-4">
               <button
                 onClick={() => handleViewDetails(data)}
-                className="block w-full border-(--color-badge-blue)/20 group-hover:bg-(--color-badge-blue)/20 border py-2 px-5 rounded-full cursor-pointer font-bold text-sm text-center text-(--color-badge-blue) transition-all duration-300 ease-linear"
+                className="w-full border-(--color-badge-blue)/20 group-hover:bg-(--color-badge-blue)/20 border py-2 px-5 rounded-full cursor-pointer font-bold text-sm text-center text-(--color-badge-blue) transition-all duration-300 ease-linear mt-4"
               >
                 View Details
               </button>
-            </div>
           </div>
         </div>
       </div>
