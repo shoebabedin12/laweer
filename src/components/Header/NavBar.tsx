@@ -44,9 +44,9 @@ const offCanvasMenu = () => {
       >
         <div className="container">
           <div className="flex items-center justify-between py-6">
-            <Link href="/" className="flex items-center gap-4">
-              <Image src={logo} alt="" />
-              <h1 className="lg:text-3xl lg:font-extrabold text-2xl font-plus_jakarta_sans font-bold text-(--color-text)">
+            <Link href="/" className="flex items-center gap-1 md:gap-4">
+              <Image src={logo} alt="" className="w-6 h-6"/>
+              <h1 className="lg:text-3xl lg:font-extrabold text-lg font-plus_jakarta_sans font-bold text-(--color-text)">
                 Law.BD
               </h1>
             </Link>

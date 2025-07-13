@@ -1,8 +1,6 @@
 'use client';
-import { layerData } from "@/data/lawyer-data";
 import Banner from "./Banner";
 import { useEffect, useState } from "react";
-import { getUsers } from "@/lib/firestore";
 import Counter from "@/components/Counter";
 import Lawyers from "@/components/Lawyers";
 import { LawyerDataType } from "@/types/DataTypes";
