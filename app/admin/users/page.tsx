@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { UserData } from "@/types/DataTypes";
+import Image from "next/image";
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -69,7 +70,9 @@ export default function ManageUsersPage() {
             <tr className="bg-gray-100">
               <th className="p-3 border-b">Name</th>
               <th className="p-3 border-b">Email</th>
+              <th className="p-3 border-b">Image</th>
               <th className="p-3 border-b">Status</th>
+              <th className="p-3 border-b">Role</th>
               <th className="p-3 border-b">Actions</th>
             </tr>
           </thead>
@@ -79,6 +82,8 @@ export default function ManageUsersPage() {
                 <td className="p-3">{u.name}</td>
                 <td className="p-3">{u.email}</td>
                 <td className="p-3">{u.blocked ? 'Blocked' : 'Active'}</td>
+                <td className="p-3"><img src={u.profileImage} alt={u.name}/></td>
+                <td className="p-3">{u.role}</td>
                 <td className="p-3 space-x-2">
                   <button
                     onClick={() => handleBlockToggle(u.id, u.blocked)}

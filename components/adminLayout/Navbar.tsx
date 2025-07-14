@@ -1,8 +1,7 @@
 "use client";
-import { BsMoon, BsSun, BsBellFill } from "react-icons/bs";
+import { BsBellFill } from "react-icons/bs";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { CiSearch } from "react-icons/ci";
 import { FiMenu } from "react-icons/fi";
 import { SidebarProps } from "@/types/DataTypes";
 

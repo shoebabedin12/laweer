@@ -73,12 +73,6 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
             icon: <FaUserTie />,
             key: "/lawyer/profile",
           },
-          {
-            href: "/lawyer/messages",
-            label: "Messages",
-            icon: <FaUserTie />,
-            key: "/lawyer/messages",
-          },
         ];
       case "user":
         return [

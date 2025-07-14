@@ -7,6 +7,7 @@ import { updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MdModeEdit } from "react-icons/md";
+import Image from "next/image";
 
 const weekdays = [
   "Sunday",
@@ -28,6 +29,34 @@ export default function LawyerProfilePage() {
   const [timeSlots, setTimeSlots] = useState<string[]>([""]);
   const [previewImageData, setPreviewImageData] = useState<string>("");
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        router.replace("/signin");
+        return;
+      }
+
+      const userRef = doc(db, "users", currentUser.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+        setName(data.name || "");
+        setSpecialization(data.specialization || "");
+        setExperience(data.experience || "");
+        setDescription(data.description || "");
+        setAvailableDays(data.availableDays || []);
+        setTimeSlots(data.availableTimeSlots || [""]);
+        setPreviewImageData(data.previewImage || "");
+      }
+      setLoading(false);
+
+    };
+
+    fetchUser();
+  }, [router]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,32 +116,6 @@ export default function LawyerProfilePage() {
     reader.readAsDataURL(file);
   };
 
-    useEffect(() => {
-    const fetchUser = async () => {
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        router.replace("/signin");
-        return;
-      }
-
-      const userRef = doc(db, "users", currentUser.uid);
-      const userSnap = await getDoc(userRef);
-
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        setName(data.name || "");
-        setSpecialization(data.specialization || "");
-        setExperience(data.experience || "");
-        setDescription(data.description || "");
-        setAvailableDays(data.availableDays || []);
-        setTimeSlots(data.availableTimeSlots || [""]);
-        setPreviewImageData(data.previewImage || "");
-      }
-      setLoading(false);
-    };
-
-    fetchUser();
-  }, [router]);
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
 

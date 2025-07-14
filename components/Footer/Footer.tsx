@@ -23,11 +23,11 @@ const Footer = () => {
             </h1>
           </Link>
           <div className="py-8">
-            <ul className="flex items-center justify-center px-5 gap-16">
+            <ul className="flex items-center justify-center px-5 gap-4 md:gap-16">
               {navbar.map((item) => (<li key={item.id}>
                 <Link
                   href={item.link}
-                  className={`relative inline-block after:block after:content-[''] after:h-[2px] after:bg-(--color-primary) after:transition-[width] after:duration-300 hover:after:w-full text-white text-[18px] font-medium ${
+                  className={`relative inline-block after:block after:content-[''] after:h-[2px] after:bg-(--color-primary) after:transition-[width] after:duration-300 hover:after:w-full text-white text-sm md:text-[18px] font-medium ${
                     router === item.link ? "after:w-full" : "after:w-0"
                   }`}
                 >
@@ -38,18 +38,18 @@ const Footer = () => {
           </div>
         </div>
         <div className="border-b-1 border-dashed border-gray-500"></div>
-        <div className="flex justify-center items-center gap-10 py-[32px]">
+        <div className="flex justify-center items-center gap-10 py-4 md:py-8">
           <Link href="#">
-            <FaFacebook className="text-blue-500  rounded-full w-9 h-9" />
+            <FaFacebook className="text-blue-500  rounded-full w-5 md:w-9 h-5 md:h-9" />
           </Link>
           <Link href="#">
-            <BsTwitterX className=" text-white w-9 h-9" />
+            <BsTwitterX className=" text-white w-5 md:w-9 h-5 md:h-9" />
           </Link>
           <Link href="#">
-            <FaLinkedin className=" text-blue-400 w-9 h-9" />
+            <FaLinkedin className=" text-blue-400 w-5 md:w-9 h-5 md:h-9" />
           </Link>
           <Link href="#">
-            <FaYoutubeSquare className=" text-red-500 w-9 h-9" />
+            <FaYoutubeSquare className=" text-red-500 w-5 md:w-9 h-5 md:h-9" />
           </Link>
         </div>
       </div>

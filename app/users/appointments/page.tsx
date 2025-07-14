@@ -16,9 +16,9 @@ export default function AppointmentBooking() {
   const [time, setTime] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedLawyer, setSelectedLawyer] = useState<any>(null);
-  const [, setBookedSlots] = useState<string[]>([]);
+  const [bookedSlotsByDate, setBookedSlotsByDate] = useState<{ [key: string]: string[] }>({});
   const [error, setError] = useState("");
-  const dropdownRef = useRef(null);
+ const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const { userId } = useUser();
 
@@ -33,6 +33,31 @@ export default function AppointmentBooking() {
     fetchLawyers();
   }, []);
 
+  useEffect(() => {
+    const fetchBookedSlots = async () => {
+      if (!selectedLawyer) return;
+
+      const snapshot = await getDocs(collection(db, "appointments"));
+      const bookings = snapshot.docs
+        .map((doc) => doc.data())
+        .filter(
+          (doc: any) =>
+            doc.lawyerId === selectedLawyer.id &&
+            doc.status === "approved"
+        );
+
+      const groupedByDate: { [key: string]: string[] } = {};
+      bookings.forEach((b: any) => {
+        if (!groupedByDate[b.date]) groupedByDate[b.date] = [];
+        groupedByDate[b.date].push(b.time);
+      });
+
+      setBookedSlotsByDate(groupedByDate);
+    };
+
+    fetchBookedSlots();
+  }, [selectedLawyer]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedLawyer || !date || !time) {
@@ -40,25 +65,13 @@ export default function AppointmentBooking() {
       return;
     }
 
+    const bookedForDate = bookedSlotsByDate[date] || [];
+    if (bookedForDate.includes(time)) {
+      toast.error("This slot is already booked!");
+      return;
+    }
+
     try {
-      // Check for duplicate booking
-      const snapshot = await getDocs(collection(db, "appointments"));
-      const duplicate = snapshot.docs.find((doc) => {
-        const data = doc.data();
-        return (
-          data.lawyerId === selectedLawyer.id &&
-          data.date === date &&
-          data.time === time &&
-          data.status === "approved"
-        );
-      });
-
-      if (duplicate) {
-        toast.error("This slot is already booked!");
-        return;
-      }
-
-      // Proceed with booking
       await addDoc(collection(db, "appointments"), {
         userId,
         lawyerId: selectedLawyer.id,
@@ -75,7 +88,6 @@ export default function AppointmentBooking() {
     }
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -87,29 +99,6 @@ export default function AppointmentBooking() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    const fetchBookedSlots = async () => {
-      if (!selectedLawyer || !date) return;
-
-      const snapshot = await getDocs(collection(db, "appointments"));
-      console.log(snapshot.docs);
-      
-      const bookings = snapshot.docs
-        .map((doc) => doc.data())
-        .filter(
-          (doc: any) =>
-            doc.lawyerId === selectedLawyer.id &&
-            doc.date === date &&
-            doc.status === "approved"
-        )
-        .map((doc: any) => doc.time);
-
-      setBookedSlots(bookings); 
-    };
-
-    fetchBookedSlots();
-  }, [selectedLawyer, date]);
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded shadow min-h-[400px]">
@@ -146,8 +135,8 @@ export default function AppointmentBooking() {
                   onClick={() => {
                     setSelectedLawyer(lawyer);
                     setDropdownOpen(false);
-                    setDate(""); // clear previous selection
-                    setTime(""); // clear previous selection
+                    setDate("");
+                    setTime("");
                     setError("");
                   }}
                 >
@@ -165,6 +154,7 @@ export default function AppointmentBooking() {
           )}
         </div>
 
+        {/* Date Picker */}
         {selectedLawyer && (
           <div>
             <label className="block">Date:</label>
@@ -175,9 +165,9 @@ export default function AppointmentBooking() {
                   const weekdayName = date.toLocaleDateString("en-US", {
                     weekday: "long",
                   });
+
                   if (
-                    selectedLawyer &&
-                    selectedLawyer.availableDays &&
+                    selectedLawyer?.availableDays &&
                     !selectedLawyer.availableDays.includes(weekdayName)
                   ) {
                     setError(`This lawyer is not available on ${weekdayName}`);
@@ -185,6 +175,7 @@ export default function AppointmentBooking() {
                   } else {
                     setError("");
                     setDate(date.toISOString().split("T")[0]);
+                    setTime("");
                   }
                 }
               }}
@@ -196,9 +187,21 @@ export default function AppointmentBooking() {
                 const weekdayName = date.toLocaleDateString("en-US", {
                   weekday: "long",
                 });
-                return selectedLawyer.availableDays.includes(weekdayName);
+                const formatted = date.toISOString().split("T")[0];
+
+                const isAvailableDay = selectedLawyer.availableDays.includes(
+                  weekdayName
+                );
+
+                const bookedForDate = bookedSlotsByDate[formatted] || [];
+                const allBooked =
+                  selectedLawyer.availableTimeSlots?.every((slot: string) =>
+                    bookedForDate.includes(slot)
+                  ) ?? false;
+
+                return isAvailableDay && !allBooked;
               }}
-              minDate={new Date()} // no past dates
+              minDate={new Date()}
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
           </div>
@@ -208,18 +211,29 @@ export default function AppointmentBooking() {
         {selectedLawyer && date && (
           <div>
             <label>Available Times:</label>
-            <select
-              className="w-full border p-2 rounded"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            >
-              <option value="">-- Select Time --</option>
-              {selectedLawyer.availableTimeSlots?.map((slot: string) => (
-                <option key={slot} value={slot}>
-                  {slot}
-                </option>
-              ))}
-            </select>
+            {selectedLawyer.availableTimeSlots?.filter(
+              (slot: string) =>
+                !bookedSlotsByDate[date]?.includes(slot)
+            ).length === 0 ? (
+              <p className="text-red-500 text-sm">
+                No available slots for this date.
+              </p>
+            ) : (
+              <select
+                className="w-full border p-2 rounded"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+              >
+                <option value="">-- Select Time --</option>
+                {selectedLawyer.availableTimeSlots
+                  .filter((slot: string) => !bookedSlotsByDate[date]?.includes(slot))
+                  .map((slot: string) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+              </select>
+            )}
           </div>
         )}
 

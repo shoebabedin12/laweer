@@ -30,12 +30,13 @@ export type UserData = {
   email: string;
   role: 'user' | 'admin' | 'lawyer';
   blocked?: boolean;
+  profileImage?: string | StaticImport;
 };
 
 export type SidebarProps = {
   showSideNav: boolean;
   setShowSideNav?: Dispatch<SetStateAction<boolean>>;
-  role?: "admin" | "lawyer" | "user";
+  role?: string | null;
 }
 
 export interface MessageType {

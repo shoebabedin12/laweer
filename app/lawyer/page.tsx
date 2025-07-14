@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { FaUserEdit, FaCalendarCheck, FaComments } from "react-icons/fa";
+import { FaCalendarCheck, FaComments } from "react-icons/fa";
 import Link from "next/link";
 
 export default function LawyerHomePage() {
@@ -35,25 +35,18 @@ export default function LawyerHomePage() {
         </div>
 
         {/* Quick Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <ActionCard
             title="Upcoming Appointments"
             icon={<FaCalendarCheck className="text-blue-600" size={32} />}
-            count={4} 
+            count={'4'} 
             description="View and manage your upcoming schedules."
             href="/lawyer/appointments"
           />
           <ActionCard
-            title="Edit Profile"
-            icon={<FaUserEdit className="text-green-600" size={32} />}
-            count="85%"
-            description="Update your personal information and bio."
-            href="/lawyer/profile"
-          />
-          <ActionCard
             title="Messages"
             icon={<FaComments className="text-purple-600" size={32} />}
-            count={12}
+            count={'12'}
             description="Check and respond to client messages."
             href="/lawyer/messages"
           />
