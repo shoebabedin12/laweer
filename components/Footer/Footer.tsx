@@ -1,5 +1,5 @@
 "use client";
-import logoFooter from "../../../public/assets/logo-footer.png";
+import logoFooter from "../../public/assets/logo-footer.png";
 import { FaFacebook } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { FaLinkedin } from "react-icons/fa6";

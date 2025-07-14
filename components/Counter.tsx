@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import logo01 from "../../public/assets/success-doctor.png";
-import logo02 from "../../public/assets/success-review.png";
-import logo03 from "../../public/assets/success-patients.png";
-import logo04 from "../../public/assets/success-staffs.png";
+import logo01 from "./../public/assets/success-doctor.png";
+import logo02 from "./../public/assets/success-review.png";
+import logo03 from "./../public/assets/success-patients.png";
+import logo04 from "./../public/assets/success-staffs.png";
 import CountUp from "react-countup";
 import Image from "next/image";
 import { useInView } from "react-intersection-observer";

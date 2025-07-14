@@ -1,6 +1,6 @@
 "use client";
 import { navbar } from "@/data/navbar-data";
-import logo from "../../../public/assets/logo.png";
+import logo from "../../public/assets/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import logo from "../../../public/assets/logo.png";
+import logo from "../../public/assets/logo.png";
 import Image from "next/image";
 
 // Validation schema using Yup

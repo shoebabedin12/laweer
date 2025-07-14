@@ -41,12 +41,12 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
     <>
       <div className="col-span-12 md:col-span-6">
         <div className="group bg-base-100 border border-(--color-text)/15 hover:shadow-md rounded-2xl grid grid-cols-12 p-6 items-center gap-4 transition-all duration-300 ease-linear">
-          <div className="col-span-12 lg:col-span-4 relative">
+          <div className="col-span-12 lg:col-span-4">
+            <div className="rounded-2xl lg:max-w-[159px] w-full h-full lg:h-[158px] relative">
               {isAvailable && <span className="absolute flex size-3 right-0 ">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
                 <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
               </span>}
-            <div className="rounded-2xl lg:max-w-[159px] w-full h-full lg:h-[158px] overflow-hidden">
              <Image className="w-full h-full object-cover rounded-2xl"
                 src={data.profileImage || ''}
                 alt={data?.name || "Name"}
@@ -59,7 +59,7 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
             <div className="flex gap-2 mb-2">
               <span
                 className={`py-[5px] px-3.5 rounded-full text-[12px] font-medium ${
-                  data.availableDays
+                  isAvailable
                     ? "bg-(--color-badge)/10 text-(--color-badge)"
                     : "bg-red-50 text-red-600"
                 }`}
