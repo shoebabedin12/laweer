@@ -2,27 +2,55 @@
 
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { FaCalendarCheck, FaComments } from "react-icons/fa";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { FaCalendarCheck } from "react-icons/fa";
 import Link from "next/link";
 
 export default function LawyerHomePage() {
   const [lawyerName, setLawyerName] = useState("Lawyer");
+  const [appointmentCount, setAppointmentCount] = useState(0);
 
   useEffect(() => {
-    const fetchLawyerData = async () => {
+    const fetchLawyerDataAndAppointments = async () => {
       const user = auth.currentUser;
       if (!user) return;
 
+      // Get lawyer name
       const docRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(docRef);
       if (userSnap.exists()) {
         const data = userSnap.data();
         setLawyerName(data.name || "Lawyer");
       }
+
+      // Get appointments for this lawyer
+      const appointmentsRef = collection(db, "appointments");
+      const appointmentsQuery = query(
+        appointmentsRef,
+        where("lawyerId", "==", user.uid),
+        where("status", "in", ["pending", "approved"])
+      );
+      const snapshot = await getDocs(appointmentsQuery);
+
+      // Filter only upcoming (today or later) appointments
+      const today = new Date();
+      const upcoming = snapshot.docs.filter((doc) => {
+        const data = doc.data();
+        const appointmentDate = new Date(data.date); // assuming date is in yyyy-mm-dd format
+        return appointmentDate >= new Date(today.toDateString()); // removes time part
+      });
+
+      setAppointmentCount(upcoming.length);
     };
 
-    fetchLawyerData();
+    fetchLawyerDataAndAppointments();
   }, []);
 
   return (
@@ -35,20 +63,13 @@ export default function LawyerHomePage() {
         </div>
 
         {/* Quick Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <ActionCard
             title="Upcoming Appointments"
             icon={<FaCalendarCheck className="text-blue-600" size={32} />}
-            count={'4'} 
+            count={appointmentCount.toString()}
             description="View and manage your upcoming schedules."
             href="/lawyer/appointments"
-          />
-          <ActionCard
-            title="Messages"
-            icon={<FaComments className="text-purple-600" size={32} />}
-            count={'12'}
-            description="Check and respond to client messages."
-            href="/lawyer/messages"
           />
         </div>
       </div>
@@ -76,8 +97,10 @@ function ActionCard({
     >
       <div className="flex items-center space-x-4 mb-4">
         <div className="bg-gray-100 p-2 rounded-full">{icon}</div>
-        <h3 className="text-xl font-semibold">{title}</h3>
-        <p className="text-3xl font-bold mt-2">{count}</p>
+        <div>
+          <h3 className="text-xl font-semibold">{title}</h3>
+          <p className="text-3xl font-bold mt-2">{count}</p>
+        </div>
       </div>
       <p className="text-gray-600 text-sm">{description}</p>
     </Link>

@@ -15,22 +15,22 @@ export default function ManageUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const snap = await getDocs(collection(db, 'users'));
+        const snap = await getDocs(collection(db, "users"));
 
         const userData: UserData[] = snap.docs
-          .filter((doc) => doc.data().role !== 'admin')
+          .filter((doc) => doc.data().role !== "admin")
           .map((doc) => ({
             id: doc.id,
-            ...(doc.data() as Omit<UserData, 'id'>),
+            ...(doc.data() as Omit<UserData, "id">),
           }));
 
         setUsers(userData);
       } catch (err) {
-        console.error('Error fetching users:', err);
+        console.error("Error fetching users:", err);
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,7 @@ export default function ManageUsersPage() {
     fetchUsers();
   }, []);
 
-  const handleBlockToggle = async (id: string, blocked: boolean) => {
+  const handleBlockToggle = async (id: string, blocked: boolean = false) => {
     await updateDoc(doc(db, "users", id), { blocked: !blocked });
     setUsers((prev) =>
       prev.map((user) =>
@@ -48,14 +48,15 @@ export default function ManageUsersPage() {
     );
   };
 
-   const handleDelete = async (id: string) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this user?');
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
     if (!confirmDelete) return;
 
-    await deleteDoc(doc(db, 'users', id));
+    await deleteDoc(doc(db, "users", id));
     setUsers((prev) => prev.filter((user) => user.id !== id));
   };
-  
 
   return (
     <div className="p-6">
@@ -81,17 +82,27 @@ export default function ManageUsersPage() {
               <tr key={u.id} className="border-t">
                 <td className="p-3">{u.name}</td>
                 <td className="p-3">{u.email}</td>
-                <td className="p-3">{u.blocked ? 'Blocked' : 'Active'}</td>
-                <td className="p-3"><img src={u.profileImage} alt={u.name}/></td>
+                <td className="p-3">{u.blocked ? "Blocked" : "Active"}</td>
+                <td className="p-3">
+                  <Image
+                    src={
+                      typeof u.profileImage === "string"
+                        ? u.profileImage
+                        : "/default-profile.png"
+                    }
+                    alt={u.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                </td>
                 <td className="p-3">{u.role}</td>
                 <td className="p-3 space-x-2">
                   <button
                     onClick={() => handleBlockToggle(u.id, u.blocked)}
                     className={`text-sm px-3 py-1 rounded cursor-pointer ${
-                      u.blocked ? 'bg-green-200' : 'bg-yellow-200'
+                      u.blocked ? "bg-green-200" : "bg-yellow-200"
                     }`}
                   >
-                    {u.blocked ? 'Unblock' : 'Block'}
+                    {u.blocked ? "Unblock" : "Block"}
                   </button>
                   <button
                     onClick={() => handleDelete(u.id)}

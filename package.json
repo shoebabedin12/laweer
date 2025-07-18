@@ -19,6 +19,7 @@
     "react-countup": "^6.5.3",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.0.0",
+    "react-firebase-hooks": "^5.1.1",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
@@ -28,7 +29,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^20",
+    "@types/estree": "^1.0.8",
+    "@types/json-schema": "^7.0.15",
+    "@types/node": "^20.19.8",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

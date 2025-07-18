@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 "use client";
 
 import { LawyeerDetailsPropTypes } from "@/types/DataTypes";
@@ -7,7 +7,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import LawyerModal from "./LawyerModal";
 
-const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
+const LawyerCard = ({ data}: LawyeerDetailsPropTypes) => {
  
   const [selectedLawyer, setSelectedLawyer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,8 +44,8 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
           <div className="col-span-12 lg:col-span-4">
             <div className="rounded-2xl lg:max-w-[159px] w-full h-full lg:h-[158px] relative">
               {isAvailable && <span className="absolute flex size-3 right-0 ">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
-                <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex size-3 rounded-full bg-primary"></span>
               </span>}
              <Image className="w-full h-full object-cover rounded-2xl"
                 src={data.profileImage || ''}
@@ -91,6 +91,7 @@ const LawyerCard = ({ data }: LawyeerDetailsPropTypes) => {
         data={selectedLawyer}
         onClose={closeModal}
         isModalOpen={isModalOpen}
+        isAvailable={isAvailable}
       />
     </>
   );

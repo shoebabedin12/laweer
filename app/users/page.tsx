@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { FaUserCircle, FaCalendarCheck } from "react-icons/fa";
 
@@ -41,7 +48,9 @@ export default function UserHomePage() {
             const appointment = docSnap.data();
             const lawyerRef = doc(db, "users", appointment.lawyerId);
             const lawyerSnap = await getDoc(lawyerRef);
-            const lawyerName = lawyerSnap.exists() ? lawyerSnap.data().name : "Unknown Lawyer";
+            const lawyerName = lawyerSnap.exists()
+              ? lawyerSnap.data().name
+              : "Unknown Lawyer";
 
             return {
               id: docSnap.id,
@@ -55,7 +64,10 @@ export default function UserHomePage() {
 
         // Optional: Sort by date
         const sorted = fetchedAppointments.sort((a, b) => {
-          return new Date(a.date + " " + a.time).getTime() - new Date(b.date + " " + b.time).getTime();
+          return (
+            new Date(a.date + " " + a.time).getTime() -
+            new Date(b.date + " " + b.time).getTime()
+          );
         });
 
         setAppointments(sorted);
@@ -68,8 +80,6 @@ export default function UserHomePage() {
 
     return () => unsubscribe();
   }, [router]);
-
- 
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
 
@@ -92,36 +102,37 @@ export default function UserHomePage() {
           </div>
         </div>
 
-      {/* Appointments Card */}
-<div className="bg-white shadow-md rounded-xl p-6">
-  <div className="flex items-center space-x-3 mb-4">
-    <FaCalendarCheck className="text-2xl text-blue-600" />
-    <h2 className="text-xl font-bold">Upcoming Appointments</h2>
-  </div>
-
-  {appointments.length > 0 ? (
-    <div className="space-y-4 overflow-y-auto max-h-[800px]">
-      {appointments.map((a) => (
-        <div
-          key={a.id}
-          className={`p-4 border rounded-md shadow-sm bg-gray-50 flex justify-between items-center ${a.status === "approved"
-          ? "border-green-500 bg-green-50"
-          : a.status === "pending"
-          ? "border-yellow-500 bg-yellow-50"
-          : "border-red-500 bg-red-50"
-      }`}
-        >
-          <div>
-            <p className="text-sm text-gray-500">Date & Time</p>
-            <p className="text-base font-medium text-gray-800">
-              {formatDateTime(a.date, a.time)}
-            </p>
-            <p className="mt-1 text-sm text-gray-600">
-              with <span className="font-semibold">{a.lawyerName}</span>
-            </p>
+        {/* Appointments Card */}
+        <div className="bg-white shadow-md rounded-xl p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <FaCalendarCheck className="text-2xl text-blue-600" />
+            <h2 className="text-xl font-bold">Upcoming Appointments</h2>
           </div>
-          <span
-            className={`text-sm font-semibold px-3 py-1 rounded-full
+
+          {appointments.length > 0 ? (
+            <div className="space-y-4 overflow-y-auto max-h-[800px]">
+              {appointments.map((a) => (
+                <div
+                  key={a.id}
+                  className={`p-4 border rounded-md shadow-sm bg-gray-50 flex justify-between items-center ${
+                    a.status === "approved"
+                      ? "border-green-500 bg-green-50"
+                      : a.status === "pending"
+                      ? "border-yellow-500 bg-yellow-50"
+                      : "border-red-500 bg-red-50"
+                  }`}
+                >
+                  <div>
+                    <p className="text-sm text-gray-500">Date & Time</p>
+                    <p className="text-base font-medium text-gray-800">
+                      {formatDateTime(a.date, a.time)}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      with <span className="font-semibold">{a.lawyerName}</span>
+                    </p>
+                  </div>
+                  <span
+                    className={`text-sm font-semibold px-3 py-1 rounded-full
               ${
                 a.status === "approved"
                   ? "bg-green-100 text-green-700"
@@ -130,17 +141,16 @@ export default function UserHomePage() {
                   : "bg-yellow-100 text-yellow-700"
               }
             `}
-          >
-            {a.status}
-          </span>
+                  >
+                    {a.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">No appointments found.</p>
+          )}
         </div>
-      ))}
-    </div>
-  ) : (
-    <p className="text-gray-600">No appointments found.</p>
-  )}
-</div>
-
       </div>
     </div>
   );

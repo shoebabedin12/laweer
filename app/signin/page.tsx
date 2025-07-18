@@ -10,8 +10,10 @@ import { FormProps } from "@/types/FormTypes";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { doc, getDoc } from "firebase/firestore";
+import Image from "next/image";
+import logo from "../../public/assets/logo.png";
 
 // ✅ Yup validation schema
 const LoginSchema = Yup.object().shape({
@@ -23,6 +25,10 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo");
+
+
   const [passwordShow, setPasswordShow] = useState(false);
   const formik = useFormik<FormProps>({
     initialValues: {
@@ -69,7 +75,7 @@ export default function LoginPage() {
           // Optional: check if profile is completed
           router.push("/lawyer");
         } else {
-          router.push("/users");
+          router.push(redirectTo || "/users");
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
@@ -79,6 +85,21 @@ export default function LoginPage() {
   });
 
   return (
+    <>
+     <header
+          className={`w-full top-0 z-50 transition-all duration-300 ease-linear bg-white shadow-md`}
+        >
+          <div className="container">
+            <div className="flex items-center justify-center py-6">
+              <Link href="/" className="flex items-center gap-4">
+                <Image src={logo} alt="" />
+                <h1 className="lg:text-3xl lg:font-extrabold text-2xl font-plus_jakarta_sans font-bold text-(--color-text)">
+                  Law.BD
+                </h1>
+              </Link>
+            </div>
+          </div>
+        </header>
     <div className="my-[100px]">
       <div className="container">
         <div className="shadow-2xl max-w-[600px] mx-auto rounded-2xl py-5 px-8">
@@ -166,5 +187,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
