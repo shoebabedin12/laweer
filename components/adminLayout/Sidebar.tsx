@@ -42,10 +42,10 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
       case "admin":
         return [
           {
-            href: "/admin/dashboard",
+            href: "/admin",
             label: "Dashboard",
             icon: <MdDashboard />,
-            key: "/admin/dashboard",
+            key: "/admin",
           },
           {
             href: "/admin/users",
