@@ -1,14 +1,13 @@
 "use client";
 
 import { SidebarProps } from "@/types/DataTypes";
-import { logout } from "@/utility/logout";
+// import { logout } from "@/utility/logout";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   BsPower,
   BsFillPersonFill,
-  BsGearFill,
   BsFillPeopleFill,
 } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
@@ -22,7 +21,7 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
   const [, setSidebarHidden] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
+    // await logout();
     router.push("/signin");
   };
 
@@ -61,7 +60,8 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
             label: "Home",
             icon: <MdDashboard />,
             key: "/lawyer",
-          }, {
+          },
+          {
             href: "/lawyer/appointments",
             label: "Appointments",
             icon: <MdDashboard />,
@@ -101,7 +101,7 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
   })();
 
   return (
-    <section id="sidebar" className={showSideNav ? "hide" : "show"}>
+    <section id="sidebar" className={showSideNav ? "show" : "hide"}>
       <a href="#" className="brand">
         <BsFillPersonFill
           size={28}
@@ -127,10 +127,16 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
           </Link>
         </li> */}
         <li>
-          <a href="" className="logout" type="button" onClick={handleLogout}>
+          {/* Use button for logout action */}
+          <button
+            type="button"
+            className="logout flex items-center gap-2"
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
             <BsPower size={18} />
             <span className="text">Logout</span>
-          </a>
+          </button>
         </li>
       </ul>
     </section>

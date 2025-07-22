@@ -1,8 +1,8 @@
 "use client";
+
 import Lawyers from "@/components/Lawyers";
-import { db } from "@/lib/firebase";
 import { LawyerDataType } from "@/types/DataTypes";
-import { collection, getDocs } from "firebase/firestore";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 const LawyersProfile = () => {
@@ -12,15 +12,11 @@ const LawyersProfile = () => {
   useEffect(() => {
     const fetchLawyers = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "users"));
-        const data = snapshot.docs
-          .map(doc => ({ id: doc.id, ...(doc.data() as Omit<LawyerDataType, 'id'>) }))
-          .filter((doc: LawyerDataType) => doc.role === "lawyer");
-
-        setDisplayLawyers(data);
-        setLoading(false);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/lawyers`);
+        setDisplayLawyers(res.data || []);
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
+      } finally {
         setLoading(false);
       }
     };

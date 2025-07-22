@@ -1,37 +1,43 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { updateProfile } from "firebase/auth";
-import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 export default function UserProfilePage() {
   const [userData, setUserData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const currentUser = auth.currentUser;
+      const token = Cookies.get("token");
 
-      if (!currentUser) {
+      if (!token) {
         router.replace("/signin");
         return;
       }
 
-      const userRef = doc(db, "users", currentUser.uid);
-      const userSnap = await getDoc(userRef);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (userSnap.exists()) {
-        const data = userSnap.data();
+        if (!res.ok) throw new Error("Unauthorized");
+
+        const data = await res.json();
         setUserData(data);
         setName(data.name);
+        setLoading(false);
+      } catch (err) {
+        router.replace("/signin");
       }
-      setLoading(false);
     };
 
     fetchUser();
@@ -40,22 +46,24 @@ export default function UserProfilePage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!auth.currentUser) return;
+    const token = Cookies.get("token");
+    if (!token) return;
 
     try {
-      const userRef = doc(db, "users", auth.currentUser.uid);
-
-      await updateDoc(userRef, {
-        name: name.trim(),
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name }),
       });
 
-      await updateProfile(auth.currentUser, {
-        displayName: name.trim(),
-      });
+      if (!res.ok) throw new Error("Update failed");
 
-      toast.success("Profile updated successfully");
-    } catch (error: any) {
-      toast.error(error.message || "Update failed");
+      toast.success("Profile updated successfully!");
+    } catch (err: any) {
+      toast.error(err.message || "Update failed");
     }
   };
 

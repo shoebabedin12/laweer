@@ -1,29 +1,32 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
 import { FiLoader } from "react-icons/fi";
 import Link from "next/link";
-import { FormProps } from "@/types/FormTypes";
-import { toast } from "react-toastify";
-import { useState } from "react";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
+import { useState } from "react";
+import axios from "axios";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
+// ✅ Form field types
+interface FormProps {
+  email: string;
+  password: string;
+}
 
 // ✅ Yup validation schema
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string()
-    .min(6, "At least 6 characters")
-    .required("Password is required"),
+  password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
 });
 
 export default function LoginPage() {
   const router = useRouter();
   const [passwordShow, setPasswordShow] = useState(false);
+  const [error, setError] = useState("");
+
   const formik = useFormik<FormProps>({
     initialValues: {
       email: "",
@@ -32,48 +35,37 @@ export default function LoginPage() {
     validationSchema: LoginSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const { user } = await signInWithEmailAndPassword(
-          auth,
-          values.email,
-          values.password
-        );
-        // ✅ Get Firebase ID token
-        const token = await user.getIdToken();
-
-        // ✅ Server sets cookie, readable by middleware
-        await fetch("/api/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token }),
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/login`, {
+          email: values.email,
+          password: values.password,
         });
 
-        // ✅ Get user document from Firestore
-        const userDocRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userDocRef);
+        const { token, user } = res.data;
 
-        if (!userSnap.exists()) {
-          toast.error("User profile not found!", { position: "top-right" });
-          return;
+        // ✅ Save token to localStorage (or cookies if you prefer)
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        const gettoken = localStorage.getItem("token");
+
+        if(gettoken){
+          const user : any = jwtDecode(gettoken);
+          const userdecoded = user;
+
+          // ✅ Redirect based on role
+          if (userdecoded.user.role === "admin") {
+            router.push("/admin");
+          } else if (userdecoded.user.role === "lawyer") {
+            router.push("/lawyer");
+          } else {
+            router.push("/users");
+          }
         }
-
-        const userData = userSnap.data();
-        const role = userData?.role;
-
-        toast.success("Logged in successfully!", { position: "top-right" });
         resetForm();
+        setError("");
 
-        // ✅ Redirect based on role
-        if (role === "admin") {
-          router.push("/admin");
-        } else if (role === "lawyer") {
-          // Optional: check if profile is completed
-          router.push("/lawyer");
-        } else {
-          router.push("/users");
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
-        toast.error(err.message, { position: "top-right" });
+        const msg = err?.response?.data?.message || "Login failed";
+        setError(msg);
       }
     },
   });
@@ -82,27 +74,30 @@ export default function LoginPage() {
     <div className="my-[100px]">
       <div className="container">
         <div className="shadow-2xl max-w-[600px] mx-auto rounded-2xl py-5 px-8">
-          <form
-            onSubmit={formik.handleSubmit}
-            className="grid grid-cols-12 gap-4"
-          >
+          <form onSubmit={formik.handleSubmit} className="grid grid-cols-12 gap-4">
             <div className="col-span-12 mb-4">
               <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
             </div>
 
+            {error && (
+              <div className="col-span-12 text-red-500 text-center mb-2">
+                {error}
+              </div>
+            )}
+
             <div className="col-span-12 mb-4">
-              <label className="block mb-2 font-medium text-base md:text-xl leading-6 text-(--color-text)/70">
+              <label className="block mb-2 font-medium text-base md:text-xl">
                 Email <span className="text-red-500">*</span>
               </label>
               <input
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.email}
                 type="text"
                 id="email"
                 name="email"
                 placeholder="Enter your email"
-                className="w-full bg-transparent text-(--color-text)/70 placeholder-gray-400 p-3 rounded-md border border-(--color-text)/70 focus:outline-none mb-1"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.email}
+                className="w-full p-3 rounded-md border border-gray-300 focus:outline-none mb-1"
               />
               {formik.touched.email && formik.errors.email && (
                 <div className="text-red-600">{formik.errors.email}</div>
@@ -110,7 +105,7 @@ export default function LoginPage() {
             </div>
 
             <div className="col-span-12 mb-4">
-              <label className="block mb-2 font-medium text-base md:text-xl leading-6 text-(--color-text)/70">
+              <label className="block mb-2 font-medium text-base md:text-xl">
                 Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -121,19 +116,17 @@ export default function LoginPage() {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.password}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-3 border rounded"
                 />
                 <div
                   onClick={() => setPasswordShow(!passwordShow)}
-                  className="cursor-pointer absolute inset-y-0 right-0 flex items-center px-8 text-gray-600 border-l border-gray-300"
+                  className="cursor-pointer absolute inset-y-0 right-0 flex items-center px-4 text-gray-600"
                 >
                   {passwordShow ? <FaRegEyeSlash /> : <FaRegEye />}
                 </div>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <div className="text-red-500 text-sm mt-1">
-                  {formik.errors.password}
-                </div>
+                <div className="text-red-500 text-sm mt-1">{formik.errors.password}</div>
               )}
             </div>
 
@@ -141,23 +134,16 @@ export default function LoginPage() {
               <button
                 disabled={formik.isSubmitting}
                 type="submit"
-                className="w-full bg-(--color-primary) text-white font-bold text-base leading-[22px] py-[17px] rounded-[65px] text-center flex items-center justify-center cursor-pointer"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-full text-center flex items-center justify-center"
               >
-                {formik.isSubmitting ? (
-                  <FiLoader className="animate-spin" />
-                ) : (
-                  "LOGIN"
-                )}
+                {formik.isSubmitting ? <FiLoader className="animate-spin" /> : "LOGIN"}
               </button>
             </div>
 
-            <div className="col-span-12 text-center mt-2">
+            <div className="col-span-12 text-center mt-4">
               <p className="text-sm">
                 Don’t have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="text-blue-600 underline hover:text-blue-800"
-                >
+                <Link href="/signup" className="text-blue-600 underline hover:text-blue-800">
                   Sign up
                 </Link>
               </p>

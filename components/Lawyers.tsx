@@ -37,7 +37,7 @@ const Lawyers = (props: LawyeersPropTypes) => {
             </div>
           </div>}
       </div>
-      {showingOption && <div className="flex items-center justify-center my-10">
+      {showingOption && visibleLawyers.length > 0 && <div className="flex items-center justify-center my-10">
         <Link
           href="/lawyers-profile"
           className="flex items-center justify-center gap-2 rounded-full font-bold bg-(--color-primary) text-white py-[22px] px-[30px] text-[18px] cursor-pointer"

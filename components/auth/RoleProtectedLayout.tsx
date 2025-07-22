@@ -1,13 +1,12 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Sidebar from "../adminLayout/Sidebar";
-import "./admin.css";
 import Navbar from "../adminLayout/Navbar";
 import { UserProvider } from "@/context/UserContext";
+import Cookies from "js-cookie";
+import "./admin.css";
 
 export default function RoleProtectedLayout({
   children,
@@ -24,42 +23,49 @@ export default function RoleProtectedLayout({
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        router.replace(redirectTo);
-        return;
-      }
-
+    const checkAuth = async () => {
       try {
-        const docRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(docRef);
+        const token = Cookies.get("token");
 
-        if (!userSnap.exists()) {
+        if (!token) {
           router.replace(redirectTo);
           return;
         }
 
-        const userRole = userSnap.data()?.role;
-        if (userRole !== allowedRole) {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
           router.replace(redirectTo);
           return;
         }
-        setRole(userRole);
-        setLoading(false); // ✅ Passed check
+
+        const data = await res.json();
+
+        if (data?.role !== allowedRole) {
+          router.replace(redirectTo);
+          return;
+        }
+
+        setRole(data.role);
+        setLoading(false);
       } catch (error) {
-        console.error("Role check failed", error);
+        console.error("Authorization check failed:", error);
         router.replace(redirectTo);
       }
-    });
+    };
 
-    return () => unsubscribe();
+    checkAuth();
   }, [allowedRole, redirectTo, router]);
 
-  if (loading) return null; // or show spinner
+  if (loading) return null; // or <Spinner />
 
   return (
     <UserProvider>
-      <Sidebar showSideNav={showSideNav} role={role}/>
+      <Sidebar showSideNav={showSideNav} role={role} />
       <section id="content">
         <Navbar showSideNav={showSideNav} setShowSideNav={setShowSideNav} />
         <main>{children}</main>
