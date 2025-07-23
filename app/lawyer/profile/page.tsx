@@ -7,7 +7,6 @@ import { updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MdModeEdit } from "react-icons/md";
-import Image from "next/image";
 
 const weekdays = [
   "Sunday",

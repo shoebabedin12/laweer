@@ -1,24 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/LawyerModal.tsx
 "use client";
 
 import React from "react";
 import Image from "next/image";
 import { getTodayAvailabilityStatus } from "@/utility/avaiabilityCheck";
+import { toast } from "react-toastify";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 const LawyerModal = ({ data, onClose }: any) => {
+    const router = useRouter();
+  const [user] = useAuthState(auth);
+
   if (!data) return null;
-  const { today, isAvailable } = getTodayAvailabilityStatus(data.availability);
 
-  const {
-    uid,
-    name,
-    profileImage,
-    specialization,
-    experience,
-    availableDays,
-  } = data;
+  const { uid, name, profileImage, specialization, experience, availableDays } =
+    data;
 
+  const { today, isAvailable } = getTodayAvailabilityStatus(data.availableDays);
+
+  const handleBooking = async () => {
+    if (!isAvailable) return;
+    if (!user) {
+      toast.error("Please log in for appointment.");
+      router.push(`/signin?redirectTo=/users/appointments/${uid}`);
+      return;
+    }
+     router.push(`/users/appointments/${uid}`);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
@@ -43,20 +53,18 @@ const LawyerModal = ({ data, onClose }: any) => {
         </figure>
         <div>
           <p className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full mb-4 inline-block">
-            {experience}
+            Experience: {experience} Years
           </p>
           <h2 className="text-xl font-bold mb-2">{name}</h2>
-          <p className="text-sm text-gray-700 mb-1">
-            {specialization}
-          </p>
+          <p className="text-sm text-gray-700 mb-1">{specialization}</p>
           <p className="text-sm text-gray-700 mb-5 flex items-center justify-items-start gap-2">
             Availability{" "}
-            {availableDays?.map((item: any) => (
+            {availableDays?.map((day: string) => (
               <span
-                key={uid}
+                 key={day}
                 className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full"
               >
-                {item}
+                {day}
               </span>
             ))}
           </p>
@@ -69,6 +77,7 @@ const LawyerModal = ({ data, onClose }: any) => {
           </p>
 
           <button
+            onClick={handleBooking}
             disabled={!isAvailable}
             className={`block w-full border-(--color-badge-blue)/20 ${
               isAvailable

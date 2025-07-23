@@ -1,4 +1,3 @@
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { Dispatch, SetStateAction } from "react";
 
 export type LawyerDataType = {
@@ -16,9 +15,8 @@ export type LawyerDataType = {
 };
 
 export type LawyeersPropTypes = {
-  data: LawyerDataType[];
-  showingOption?:number;
-  loading?:Boolean;
+  data?: LawyerDataType[];
+  showingOption?: number;
 };
 export type LawyeerDetailsPropTypes = {
   data: LawyerDataType;
@@ -28,9 +26,9 @@ export type UserData = {
   id: string;
   name: string;
   email: string;
-  role: 'user' | 'admin' | 'lawyer';
+  role: string;
   blocked?: boolean;
-  profileImage?: string | StaticImport;
+  profileImage?: string;
 };
 
 export type SidebarProps = {
@@ -46,3 +44,30 @@ export interface MessageType {
   text: string;
   timestamp: Date;
 }
+
+
+export interface AppointmentType {
+  id: string;
+  lawyerId: string;
+  userId: string;
+  date: string;
+  time: string;
+  status: "pending" | "approved" | "rejected";
+  clientName: string;
+  clientImage: string | null;
+};
+
+
+export interface FirestoreAppointment {
+  lawyerId: string;
+  userId: string;
+  date: string;
+  time: string;
+  status: "pending" | "approved" | "rejected";
+};
+
+export interface FirestoreUser {
+  name: string;
+  profileImage?: string;
+};
+

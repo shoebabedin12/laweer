@@ -19,6 +19,7 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
   const router = useRouter();
   const [, setIsMobile] = useState(false);
   const [, setSidebarHidden] = useState(false);
+ 
 
   const handleLogout = async () => {
     // await logout();
@@ -41,10 +42,10 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
       case "admin":
         return [
           {
-            href: "/admin/dashboard",
+            href: "/admin",
             label: "Dashboard",
             icon: <MdDashboard />,
-            key: "/admin/dashboard",
+            key: "/admin",
           },
           {
             href: "/admin/users",
@@ -107,7 +108,7 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
           size={28}
           style={{ minWidth: 60, display: "flex", justifyContent: "center" }}
         />
-        <span className="text">AdminHub</span>
+        <span className="text capitalize">{role}</span>
       </a>
       <ul className="side-menu top">
         {menuItems.map((item) => (

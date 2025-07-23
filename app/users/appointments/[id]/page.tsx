@@ -1,17 +1,17 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from "react";
 import { db } from "@/lib/firebase";
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import { useUser } from "@/context/UserContext";
 
 export default function AppointmentBooking() {
+  const { id } = useParams();
   const [lawyers, setLawyers] = useState<any[]>([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -30,6 +30,16 @@ export default function AppointmentBooking() {
         .filter((doc) => doc.data().role === "lawyer")
         .map((doc) => ({ id: doc.id, ...doc.data() }));
       setLawyers(data);
+
+      // Auto-select lawyer by URL id if present
+    if (id) {
+      const matchedLawyer = data.find((lawyer) => lawyer.id === id);
+      if (matchedLawyer) {
+        setSelectedLawyer(matchedLawyer);
+        setDropdownOpen(false);
+      }
+    }
+    
     };
     fetchLawyers();
   }, []);
@@ -141,10 +151,12 @@ export default function AppointmentBooking() {
                     setError("");
                   }}
                 >
-                  <img
+                  <Image
                     src={lawyer.profileImage}
                     className="w-6 h-6 rounded-full"
                     alt="profile-img"
+                    width={24}
+                    height={24}
                   />
                   <span>{lawyer.name}</span>
                 </li>

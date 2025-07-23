@@ -46,7 +46,7 @@ export default function SignupPage() {
     initialValues: {
       name: "",
       email: "",
-      role: "admin",
+      role: "",
       password: "",
       confirm_password: "",
     },
