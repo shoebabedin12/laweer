@@ -54,7 +54,7 @@ export default function SignupPage() {
     onSubmit: async (values, { resetForm }) => {
       setMessage(null);
       try {
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/signup`, {
+        const res = await axios.post<{ message: string }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/signup`, {
           name: values.name,
           email: values.email,
           password: values.password,

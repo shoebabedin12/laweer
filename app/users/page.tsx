@@ -2,14 +2,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "@/lib/firebase";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { FaUserCircle, FaCalendarCheck } from "react-icons/fa";
 import axios from "axios";
 import Cookies from "js-cookie";
-// import jwtDecode from "jwt-decode";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+interface Appointment {
+  id: string;
+  date: string;
+  time: string;
+  status: "pending" | "approved" | "rejected";
+  lawyerName: string;
+}
 
 export default function UserHomePage() {
   const [userData, setUserData] = useState<any>(null);
@@ -20,33 +31,34 @@ export default function UserHomePage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-     const fetchData = async () => {
+    if (!token) {
+      router.replace("/signin");
+      return;
+    }
+
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+        // ✅ Get user info
+        const res = await axios.get<{ user: User }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUserData(res.data.user);
 
-        const fetchedAppointments = await Promise.all(
-          appointmentsSnap.docs.map(async (docSnap) => {
-            const appointment = docSnap.data();
-            const lawyerRef = doc(db, "users", appointment.lawyerId);
-            const lawyerSnap = await getDoc(lawyerRef);
-            const lawyerName = lawyerSnap.exists() ? lawyerSnap.data().name : "Unknown Lawyer";
+        const user = res.data.user;
+        setUserData(user);
 
-            return {
-              id: docSnap.id,
-              date: appointment.date,
-              time: appointment.time,
-              status: appointment.status,
-              lawyerName,
-            };
-          })
+        // ✅ Get appointments for this user
+        const appointmentsRes = await axios.get<{ appointments: Appointment[] }>(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/appointments/user/${user.id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
 
-        // Optional: Sort by date
-        const sorted = fetchedAppointments.sort((a, b) => {
-          return new Date(a.date + " " + a.time).getTime() - new Date(b.date + " " + b.time).getTime();
+        const sorted = appointmentsRes.data.appointments.sort((a: any, b: any) => {
+          return (
+            new Date(a.date + " " + a.time).getTime() -
+            new Date(b.date + " " + b.time).getTime()
+          );
         });
 
         setAppointments(sorted);
@@ -83,61 +95,58 @@ export default function UserHomePage() {
           </div>
         </div>
 
-      {/* Appointments Card */}
-<div className="bg-white shadow-md rounded-xl p-6">
-  <div className="flex items-center space-x-3 mb-4">
-    <FaCalendarCheck className="text-2xl text-blue-600" />
-    <h2 className="text-xl font-bold">Upcoming Appointments</h2>
-  </div>
-
-  {appointments.length > 0 ? (
-    <div className="space-y-4 overflow-y-auto max-h-[800px]">
-      {appointments.map((a) => (
-        <div
-          key={a.id}
-          className={`p-4 border rounded-md shadow-sm bg-gray-50 flex justify-between items-center ${a.status === "approved"
-          ? "border-green-500 bg-green-50"
-          : a.status === "pending"
-          ? "border-yellow-500 bg-yellow-50"
-          : "border-red-500 bg-red-50"
-      }`}
-        >
-          <div>
-            <p className="text-sm text-gray-500">Date & Time</p>
-            <p className="text-base font-medium text-gray-800">
-              {formatDateTime(a.date, a.time)}
-            </p>
-            <p className="mt-1 text-sm text-gray-600">
-              with <span className="font-semibold">{a.lawyerName}</span>
-            </p>
+        {/* 📅 Appointments */}
+        <div className="bg-white shadow-md rounded-xl p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <FaCalendarCheck className="text-2xl text-blue-600" />
+            <h2 className="text-xl font-bold">Upcoming Appointments</h2>
           </div>
-          <span
-            className={`text-sm font-semibold px-3 py-1 rounded-full
-              ${
-                a.status === "approved"
-                  ? "bg-green-100 text-green-700"
-                  : a.status === "rejected"
-                  ? "bg-red-100 text-red-700"
-                  : "bg-yellow-100 text-yellow-700"
-              }
-            `}
-          >
-            {a.status}
-          </span>
-        </div>
-      ))}
-    </div>
-  ) : (
-    <p className="text-gray-600">No appointments found.</p>
-  )}
-</div>
 
+          {appointments.length > 0 ? (
+            <div className="space-y-4 overflow-y-auto max-h-[800px]">
+              {appointments.map((a) => (
+                <div
+                  key={a.id}
+                  className={`p-4 border rounded-md shadow-sm bg-gray-50 flex justify-between items-center ${
+                    a.status === "approved"
+                      ? "border-green-500 bg-green-50"
+                      : a.status === "pending"
+                      ? "border-yellow-500 bg-yellow-50"
+                      : "border-red-500 bg-red-50"
+                  }`}
+                >
+                  <div>
+                    <p className="text-sm text-gray-500">Date & Time</p>
+                    <p className="text-base font-medium text-gray-800">
+                      {formatDateTime(a.date, a.time)}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      with <span className="font-semibold">{a.lawyerName}</span>
+                    </p>
+                  </div>
+                  <span
+                    className={`text-sm font-semibold px-3 py-1 rounded-full ${
+                      a.status === "approved"
+                        ? "bg-green-100 text-green-700"
+                        : a.status === "rejected"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {a.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600">No appointments found.</p>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-// Format: "15 July 2025, 10:00 AM"
 function formatDateTime(date: string, time: string): string {
   const dt = new Date(`${date}T${time}`);
   return dt.toLocaleString("en-US", {
