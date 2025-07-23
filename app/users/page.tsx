@@ -31,10 +31,10 @@ export default function UserHomePage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (!token) {
-      router.replace("/signin");
-      return;
-    }
+    // if (!token) {
+    //   router.replace("/signin");
+    //   return;
+    // }
 
     const fetchData = async () => {
       try {

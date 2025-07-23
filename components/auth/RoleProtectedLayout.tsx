@@ -25,12 +25,12 @@ export default function RoleProtectedLayout({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = Cookies.get("token");
+        const token = localStorage.getItem("token");
 
-        if (!token) {
-          router.replace(redirectTo);
-          return;
-        }
+        // if (!token) {
+        //   router.replace(redirectTo);
+        //   return;
+        // }
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
           headers: {

@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import logo from "../public/assets/logo.png";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -35,7 +35,7 @@ export default function LoginComponent() {
     validationSchema: LoginSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        const response = await axios.post<{ token: string }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
+        const response = await axios.post<{ token: string }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/login`, {
           email: values.email,
           password: values.password,
         });
@@ -46,6 +46,10 @@ export default function LoginComponent() {
         const decoded: any = jwtDecode(token);
         const role = decoded.user?.role;
 
+        console.log(decoded);
+        console.log(role);
+        
+
         // ✅ Store token in localStorage
         localStorage.setItem("token", token);
 
@@ -54,10 +58,13 @@ export default function LoginComponent() {
 
         // ✅ Redirect based on role
         if (role === "admin") {
+          console.log(role);
           router.push("/admin");
         } else if (role === "lawyer") {
+          console.log(role);
           router.push("/lawyer");
         } else {
+          console.log(role);
           router.push(redirectTo || "/users");
         }
       } catch (err: any) {
