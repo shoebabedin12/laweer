@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
+ 
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
 import { useRouter } from "next/navigation";
-import {jwtDecode} from "jwt-decode";
 
 type MeResponse = {
   id: number;
@@ -15,7 +15,7 @@ export const UserContext = createContext<{ userId: string | null }>({ userId: nu
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<string | null>(null);
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+  const API_BASE = process.env.NEXT_PUBLIC_APP_API_KEY;
   const router = useRouter();
 
   useEffect(() => {
@@ -23,14 +23,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       if (typeof window === "undefined") return;
 
       const token = localStorage.getItem('token');
-      const decoded: any = jwtDecode(token);
-      const currentRole = decoded?.user?.role || null;
-      
-      // if (!token) {
-      //   router.replace("/signin");
-      //   return;
-      // }
-
+      if (!token) {
+        router.replace("/signin");
+        return;
+      }
       try {
         const res = await axios.get<MeResponse>(`${API_BASE}/me`, {
           headers: { Authorization: `Bearer ${token}` },

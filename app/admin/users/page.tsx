@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { UserData } from "@/types/DataTypes";
 import Image from "next/image";
 import DataTable from "react-data-table-component";
 import { FaLock, FaLockOpen, FaTrash } from "react-icons/fa";
+
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  blocked: boolean;
+  profileImage?: string;
+}
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -45,7 +46,7 @@ export default function ManageUsersPage() {
                 className="rounded-full object-cover"
               />
             ) : (
-              <><p>No Image</p></>
+              <p>No Image</p>
             ),
           ignoreRowClick: true,
           allowOverflow: true,
@@ -74,22 +75,22 @@ export default function ManageUsersPage() {
           name: "Actions",
           cell: (row: UserData) => (
             <div className="space-x-2">
-             <button
-            onClick={() => handleBlockToggle(row.id, row.blocked)}
-            className={`text-sm flex items-center gap-1 px-3 py-1 rounded cursor-pointer ${
-              row.blocked
-                ? "bg-green-200 text-green-900"
-                : "bg-yellow-200 text-yellow-900"
-            }`}
-          >
-            {row.blocked ? <FaLockOpen /> : <FaLock />}
-          </button>
-          <button
-            onClick={() => handleDelete(row.id)}
-            className="text-sm flex items-center gap-1 px-3 py-1 bg-red-200 text-red-900 rounded cursor-pointer"
-          >
-            <FaTrash />
-          </button>
+              <button
+                onClick={() => handleBlockToggle(row.id, row.blocked)}
+                className={`text-sm flex items-center gap-1 px-3 py-1 rounded cursor-pointer ${
+                  row.blocked
+                    ? "bg-green-200 text-green-900"
+                    : "bg-yellow-200 text-yellow-900"
+                }`}
+              >
+                {row.blocked ? <FaLockOpen /> : <FaLock />}
+              </button>
+              <button
+                onClick={() => handleDelete(row.id)}
+                className="text-sm flex items-center gap-1 px-3 py-1 bg-red-200 text-red-900 rounded cursor-pointer"
+              >
+                <FaTrash />
+              </button>
             </div>
           ),
           ignoreRowClick: true,
@@ -106,15 +107,9 @@ export default function ManageUsersPage() {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const snap = await getDocs(collection(db, "users"));
-
-        const userData: UserData[] = snap.docs
-          .filter((doc) => doc.data().role !== "admin")
-          .map((doc) => ({
-            id: doc.id,
-            ...(doc.data() as Omit<UserData, "id">),
-          }));
-
+        const res = await fetch("/api/users");
+        const data = await res.json();
+        const userData: UserData[] = data.filter((u: UserData) => u.role !== "admin");
         setUsers(userData);
       } catch (err) {
         console.error("Error fetching users:", err);
@@ -127,12 +122,20 @@ export default function ManageUsersPage() {
   }, []);
 
   const handleBlockToggle = async (id: string, blocked: boolean = false) => {
-    await updateDoc(doc(db, "users", id), { blocked: !blocked });
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id ? { ...user, blocked: !blocked } : user
-      )
-    );
+    try {
+      await fetch(`/api/users/${id}/block`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ blocked: !blocked }),
+      });
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.id === id ? { ...user, blocked: !blocked } : user
+        )
+      );
+    } catch (err) {
+      console.error("Error updating block status:", err);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -141,8 +144,12 @@ export default function ManageUsersPage() {
     );
     if (!confirmDelete) return;
 
-    await deleteDoc(doc(db, "users", id));
-    setUsers((prev) => prev.filter((user) => user.id !== id));
+    try {
+      await fetch(`/api/users/${id}`, { method: "DELETE" });
+      setUsers((prev) => prev.filter((user) => user.id !== id));
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
   };
 
   return (

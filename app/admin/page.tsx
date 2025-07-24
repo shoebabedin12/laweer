@@ -1,26 +1,32 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import { MdEventAvailable } from 'react-icons/md';
 import { BsFillPeopleFill } from 'react-icons/bs';
 import { FaGavel } from 'react-icons/fa';
 
+type Stats = {
+  users: number;
+  lawyers: number;
+  appointments: number;
+};
+
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState({ users: 0, lawyers: 0, appointments: 0 });
+  const [stats, setStats] = useState<Stats>({ users: 0, lawyers: 0, appointments: 0 });
 
   useEffect(() => {
     const fetchStats = async () => {
-      const usersSnap = await getDocs(collection(db, 'users'));
-      const lawyerCount = usersSnap.docs.filter(doc => doc.data().role === 'lawyer').length;
-      const userCount = usersSnap.docs.filter(doc => doc.data().role === 'user').length;
+      try {
+        const res = await fetch('/api/admin/stats'); // Make sure your backend provides this route
+        const data = await res.json();
 
-      const appointmentsSnap = await getDocs(collection(db, 'appointments')); // optional
-      setStats({
-        users: userCount,
-        lawyers: lawyerCount,
-        appointments: appointmentsSnap.size,
-      });
+        setStats({
+          users: data.totalUsers || 0,
+          lawyers: data.totalLawyers || 0,
+          appointments: data.totalAppointments || 0,
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
     };
 
     fetchStats();
@@ -40,9 +46,9 @@ export default function AdminDashboardPage() {
 
 function DashboardCard({ title, count, icon }: { title: string; count: number; icon: React.ReactNode; }) {
   return (
-    <div className={`box-card`}>
-      <i className="bx">{icon}</i>
-      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+    <div className="box-card p-6 bg-white shadow rounded text-center">
+      <div className="text-4xl mb-2">{icon}</div>
+      <h2 className="text-xl font-semibold mb-1">{title}</h2>
       <p className="text-3xl font-bold">{count}</p>
     </div>
   );

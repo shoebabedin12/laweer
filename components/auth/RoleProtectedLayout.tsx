@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Sidebar from "../adminLayout/Sidebar";
 import Navbar from "../adminLayout/Navbar";
 import { UserProvider } from "@/context/UserContext";
-import Cookies from "js-cookie";
 import "./admin.css";
 
 export default function RoleProtectedLayout({
@@ -27,12 +26,12 @@ export default function RoleProtectedLayout({
       try {
         const token = localStorage.getItem("token");
 
-        // if (!token) {
-        //   router.replace(redirectTo);
-        //   return;
-        // }
+        if (!token) {
+          router.replace(redirectTo);
+          return;
+        }
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

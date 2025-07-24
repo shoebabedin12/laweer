@@ -5,29 +5,30 @@ import React from "react";
 import Image from "next/image";
 import { getTodayAvailabilityStatus } from "@/utility/avaiabilityCheck";
 import { toast } from "react-toastify";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/lib/firebase";
+import { useAuth } from "@/context/AuthContext"; // ✅ Custom Auth Context
 import { useRouter } from "next/navigation";
 
 const LawyerModal = ({ data, onClose }: any) => {
-    const router = useRouter();
-  const [user] = useAuthState(auth);
+  const router = useRouter();
+  const { user } = useAuth(); // ✅ Use your custom auth hook
 
   if (!data) return null;
 
   const { uid, name, profileImage, specialization, experience, availableDays } =
     data;
 
-  const { today, isAvailable } = getTodayAvailabilityStatus(data.availableDays);
+  const { today, isAvailable } = getTodayAvailabilityStatus(availableDays);
 
-  const handleBooking = async () => {
+  const handleBooking = () => {
     if (!isAvailable) return;
+
     if (!user) {
       toast.error("Please log in for appointment.");
       router.push(`/signin?redirectTo=/users/appointments/${uid}`);
       return;
     }
-     router.push(`/users/appointments/${uid}`);
+
+    router.push(`/users/appointments/${uid}`);
   };
 
   return (
@@ -52,17 +53,17 @@ const LawyerModal = ({ data, onClose }: any) => {
           />
         </figure>
         <div>
-          <p className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full mb-4 inline-block">
+          <p className="font-mulish bg-blue-100 text-[12px] font-medium text-blue-700 py-[5px] px-3.5 rounded-full mb-4 inline-block">
             Experience: {experience} Years
           </p>
           <h2 className="text-xl font-bold mb-2">{name}</h2>
           <p className="text-sm text-gray-700 mb-1">{specialization}</p>
-          <p className="text-sm text-gray-700 mb-5 flex items-center justify-items-start gap-2">
+          <p className="text-sm text-gray-700 mb-5 flex items-center justify-items-start gap-2 flex-wrap">
             Availability{" "}
             {availableDays?.map((day: string) => (
               <span
-                 key={day}
-                className="font-mulish bg-(--color-badge-blue)/10 text-[12px] font-medium text-(--color-badge-blue) py-[5px] px-3.5 rounded-full"
+                key={day}
+                className="font-mulish bg-blue-100 text-[12px] font-medium text-blue-700 py-[5px] px-3.5 rounded-full"
               >
                 {day}
               </span>
@@ -79,11 +80,11 @@ const LawyerModal = ({ data, onClose }: any) => {
           <button
             onClick={handleBooking}
             disabled={!isAvailable}
-            className={`block w-full border-(--color-badge-blue)/20 ${
+            className={`block w-full border border-blue-300 ${
               isAvailable
-                ? "hover:bg-(--color-badge-blue)/20 cursor-pointer"
+                ? "hover:bg-blue-100 cursor-pointer"
                 : "opacity-50 cursor-not-allowed"
-            } border py-2 px-5 rounded-full font-bold text-sm text-center text-(--color-badge-blue) transition-all duration-300 ease-linear`}
+            } py-2 px-5 rounded-full font-bold text-sm text-center text-blue-700 transition-all duration-300 ease-linear`}
           >
             Book
           </button>

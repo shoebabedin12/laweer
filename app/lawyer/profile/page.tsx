@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import { useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { updateProfile } from "firebase/auth";
+import axios from "axios";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { MdModeEdit } from "react-icons/md";
@@ -29,55 +28,68 @@ export default function LawyerProfilePage() {
   const [previewImageData, setPreviewImageData] = useState<string>("");
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const currentUser = auth.currentUser;
-      if (!currentUser) {
-        router.replace("/signin");
-        return;
-      }
+  // Replace with your auth method to get logged-in lawyer ID & token
+  // const lawyerId = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+    // if (!lawyerId) {
+    //   router.replace("/signin");
+    //   return;
+    // }
 
-      const userRef = doc(db, "users", currentUser.uid);
-      const userSnap = await getDoc(userRef);
+    // const fetchUser = async () => {
+    //   try {
+    //     setLoading(true);
+        // const res = await axios.get(`${process.env.NEXT_PUBLIC_APP_API_KEY}/users/${lawyerId}`, {
+        //   headers: { Authorization: `Bearer ${token}` },
+        // });
+        // const data = res.data;
+        // setName(data.name || "");
+        // setSpecialization(data.specialization || "");
+        // setExperience(data.experience || "");
+        // setDescription(data.description || "");
+        // setAvailableDays(data.availableDays || []);
+        // setTimeSlots(data.availableTimeSlots?.length ? data.availableTimeSlots : [""]);
+        // setPreviewImageData(data.profileImage || "");
+      // } catch (error) {
+      //   toast.error("Failed to load profile data");
+        // router.replace("/signin");
+      // } finally {
+      //   setLoading(false);
+      // }
+    // };
 
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        setName(data.name || "");
-        setSpecialization(data.specialization || "");
-        setExperience(data.experience || "");
-        setDescription(data.description || "");
-        setAvailableDays(data.availableDays || []);
-        setTimeSlots(data.availableTimeSlots || [""]);
-        setPreviewImageData(data.previewImage || "");
-      }
-      setLoading(false);
-
-    };
-
-    fetchUser();
-  }, [router]);
+  //   fetchUser();
+  // }, [lawyerId, router, token]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const currentUser = auth.currentUser;
-    if (!currentUser) return;
+    // if (!lawyerId) return;
 
     try {
-      const userRef = doc(db, "users", currentUser.uid);
-      await updateDoc(userRef, {
-        name: name.trim(),
-        specialization,
-        experience,
-        description,
-        availableDays,
-        availableTimeSlots: timeSlots,
-        profileImage: previewImageData,
-      });
+      setLoading(true);
+      await axios.put(
+        `${process.env.NEXT_PUBLIC_APP_API_KEY}/me`,
+        {
+          name: name.trim(),
+          specialization,
+          experience,
+          description,
+          availableDays,
+          availableTimeSlots: timeSlots,
+          profileImage: previewImageData,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      await updateProfile(currentUser, { displayName: name.trim() });
       toast.success("Profile updated successfully");
     } catch (error: any) {
-      toast.error(error.message || "Update failed");
+      toast.error(error?.response?.data?.message || "Update failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +105,6 @@ export default function LawyerProfilePage() {
     setTimeSlots(newSlots);
   };
 
-  // Add new empty time slot input
   const addTimeSlot = () => {
     setTimeSlots([...timeSlots, ""]);
   };
@@ -110,11 +121,10 @@ export default function LawyerProfilePage() {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
-      setPreviewImageData(base64String); // save for preview + db
+      setPreviewImageData(base64String);
     };
     reader.readAsDataURL(file);
   };
-
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
 
@@ -141,9 +151,11 @@ export default function LawyerProfilePage() {
             <div
               id="imagePreview"
               style={{ backgroundImage: `url(${previewImageData})` }}
+              className="w-32 h-32 rounded-full bg-gray-200 bg-center bg-cover"
             ></div>
           </div>
         </div>
+
         <div>
           <label className="block font-semibold">Full Name</label>
           <input
@@ -201,23 +213,29 @@ export default function LawyerProfilePage() {
         <div>
           <label>Available Time Slots:</label>
           {timeSlots.map((time, index) => (
-            <div key={index} style={{ marginBottom: "8px" }}>
+            <div key={index} className="flex items-center gap-2 mb-2">
               <input
                 type="time"
                 value={time}
                 onChange={(e) => handleTimeChange(index, e.target.value)}
                 required
+                className="border rounded p-1"
               />
               <button
                 type="button"
                 onClick={() => removeTimeSlot(index)}
                 disabled={timeSlots.length === 1}
+                className="text-red-600 hover:text-red-800"
               >
                 Remove
               </button>
             </div>
           ))}
-          <button type="button" onClick={addTimeSlot}>
+          <button
+            type="button"
+            onClick={addTimeSlot}
+            className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+          >
             Add Time Slot
           </button>
         </div>

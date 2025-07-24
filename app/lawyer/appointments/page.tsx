@@ -1,58 +1,79 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
-import { db, auth } from "@/lib/firebase";
-import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 import { toast } from "react-toastify";
-import { FirestoreAppointment } from "@/types/DataTypes";
+
+interface User {
+  id: string;
+  name: string;
+  profileImage?: string | null;
+  // Add more fields if needed
+}
+
+interface Appointment {
+  id: string;
+  userId: string;
+  lawyerId: string;
+  date: string; // yyyy-mm-dd
+  time: string; // HH:mm
+  status: "pending" | "approved" | "rejected";
+}
+
+interface AppointmentWithClient extends Appointment {
+  clientName: string;
+  clientImage?: string | null;
+}
 
 export default function LawyerAppointmentsPage() {
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
   const [loading, setLoading] = useState(false);
   const [lawyerId, setLawyerId] = useState<string | null>(null);
 
-  // Fetch lawyer ID from auth
+  // For demo, read lawyerId from localStorage or other auth context
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setLawyerId(user.uid);
-      }
-    });
-    return () => unsubscribe();
+    // Example: get lawyerId from stored token or auth context
+    const storedLawyerId = localStorage.getItem("token");
+    if (storedLawyerId) {
+      setLawyerId(storedLawyerId);
+    } else {
+      // Redirect to login or show message
+      toast.error("Lawyer not authenticated");
+    }
   }, []);
 
   const fetchAppointments = useCallback(async () => {
     if (!lawyerId) return;
+    setLoading(true);
 
     try {
-      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No auth token found");
 
-      const [appointmentsSnap, usersSnap] = await Promise.all([
-        getDocs(collection(db, "appointments")),
-        getDocs(collection(db, "users")),
-      ]);
+      // Fetch appointments for this lawyer
+      const apptRes = await axios.get<Appointment[]>(
+        `${process.env.NEXT_PUBLIC_APP_API_KEY}/appointments?lawyerId=${lawyerId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      const usersMap: Record<string, any> = {};
-      usersSnap.docs.forEach((doc) => {
-        usersMap[doc.id] = doc.data();
+      // Fetch all users (clients)
+      const userRes = await axios.get<User[]>(
+        `${process.env.NEXT_PUBLIC_APP_API_KEY}/users`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const usersMap: Record<string, User> = {};
+      userRes.data.forEach((user) => {
+        usersMap[user.id] = user;
       });
 
-      const data = appointmentsSnap.docs
-        .map((doc) => {
-          const appointment = doc.data() as FirestoreAppointment;
-          const client = usersMap[appointment.userId] || {};
-
+      const data: AppointmentWithClient[] = apptRes.data
+        .map((appt) => {
+          const client = usersMap[appt.userId];
           return {
-            id: doc.id,
-            userId: appointment.userId,
-            lawyerId: appointment.lawyerId,
-            date: appointment.date,
-            time: appointment.time,
-            status: appointment.status,
-            clientName: client.name || "Unknown",
-            clientImage: client.profileImage || null,
+            ...appt,
+            clientName: client?.name || "Unknown",
+            clientImage: client?.profileImage || null,
           };
         })
         .filter((a) => a.lawyerId === lawyerId)
@@ -65,8 +86,8 @@ export default function LawyerAppointmentsPage() {
       setAppointments(data);
       toast.info("Appointment list refreshed");
     } catch (error) {
-      toast.error("Failed to refresh");
       console.error(error);
+      toast.error("Failed to refresh appointments");
     } finally {
       setLoading(false);
     }
@@ -78,42 +99,44 @@ export default function LawyerAppointmentsPage() {
     }
   }, [lawyerId, fetchAppointments]);
 
-  // Handle Status Update
+  // Update appointment status via API
   const handleStatusChange = async (
     id: string,
     newStatus: "approved" | "rejected"
   ) => {
     try {
       setLoading(true);
-      const appointmentRef = doc(db, "appointments", id);
-      await updateDoc(appointmentRef, { status: newStatus });
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No auth token found");
+
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/appointments/${id}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       toast.success(`Appointment ${newStatus}`);
       fetchAppointments();
     } catch (error) {
       console.error("Status update failed", error);
-      toast.error("Failed to update status");
+      toast.error("Failed to update appointment status");
     } finally {
       setLoading(false);
     }
   };
 
-  // Format time
+  // Format time string (HH:mm) to localized format
   const formatTime = (timeStr: string) => {
     const [hours, minutes] = timeStr.split(":").map(Number);
     const date = new Date();
-    date.setHours(hours);
-    date.setMinutes(minutes);
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    date.setHours(hours, minutes);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Appointments</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Appointments</h1>
         <button
           onClick={fetchAppointments}
           disabled={loading}
@@ -149,10 +172,10 @@ export default function LawyerAppointmentsPage() {
         </button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
+      <div className="overflow-x-auto border rounded shadow">
+        <table className="w-full table-auto border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
               <th className="p-3 border">Date</th>
               <th className="p-3 border">Time</th>
               <th className="p-3 border">Client</th>
@@ -161,37 +184,53 @@ export default function LawyerAppointmentsPage() {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((a) => (
+            {appointments.length === 0 && (
+              <tr>
+                <td colSpan={5} className="p-4 text-center text-gray-500">
+                  No appointments found.
+                </td>
+              </tr>
+            )}
+            {appointments.map((appt) => (
               <tr
-                key={a.id}
+                key={appt.id}
                 className={`${
-                  a.status === "approved"
+                  appt.status === "approved"
                     ? "text-green-600"
-                    : a.status === "pending"
+                    : appt.status === "pending"
                     ? "text-yellow-600"
                     : "text-red-600"
                 }`}
               >
-                <td className="p-2 border">{a.date}</td>
-                <td className="p-2 border">{formatTime(a.time)}</td>
-                <td className="p-2 border">
-                  <div className="flex items-center gap-2">
-                    <span>{a.clientName}</span>
-                  </div>
+                <td className="p-2 border">{appt.date}</td>
+                <td className="p-2 border">{formatTime(appt.time)}</td>
+                <td className="p-2 border flex items-center gap-2">
+                  {appt.clientImage ? (
+                    <img
+                      src={appt.clientImage}
+                      alt={appt.clientName}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm">
+                      N/A
+                    </div>
+                  )}
+                  <span>{appt.clientName}</span>
                 </td>
-                <td className={`p-2 border capitalize`}>{a.status}</td>
+                <td className="p-2 border capitalize">{appt.status}</td>
                 <td className="p-2 border">
-                  {a.status === "pending" ? (
+                  {appt.status === "pending" ? (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleStatusChange(a.id, "approved")}
+                        onClick={() => handleStatusChange(appt.id, "approved")}
                         disabled={loading}
                         className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => handleStatusChange(a.id, "rejected")}
+                        onClick={() => handleStatusChange(appt.id, "rejected")}
                         disabled={loading}
                         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                       >

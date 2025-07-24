@@ -15,7 +15,7 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = Cookies.get("token");
+      const token = localStorage.getItem("token");
 
       if (!token) {
         router.replace("/signin");
@@ -23,7 +23,7 @@ export default function UserProfilePage() {
       }
 
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -46,11 +46,12 @@ export default function UserProfilePage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const token = Cookies.get("token");
+    const token = localStorage.getItem("token");
+
     if (!token) return;
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -68,6 +69,7 @@ export default function UserProfilePage() {
   };
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
+  
 
   return (
     <div className="p-6 max-w-xl mx-auto">

@@ -1,31 +1,27 @@
-"use client";
+'use client';
+
 import LawyerCard from "./LawyerCard";
 import { useEffect, useState } from "react";
 import { LawyeersPropTypes, LawyerDataType } from "@/types/DataTypes";
 import Link from "next/link";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
 const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
   const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
-  const [visibleLawyers, setVisibleLawyers] = useState(displayLawyers);
+  const [visibleLawyers, setVisibleLawyers] = useState<LawyerDataType[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLawyers = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "users"));
-        const data = snapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...(doc.data() as Omit<LawyerDataType, "id">),
-          }))
-          .filter((doc: LawyerDataType) => doc.role === "lawyer");
+        const res = await fetch("/api/lawyers");
+        if (!res.ok) throw new Error("Failed to fetch");
+        const data: LawyerDataType[] = await res.json();
 
-        setDisplayLawyers(data);
-        setLoading(false);
+        const filtered = data.filter((doc) => doc.role === "lawyer");
+        setDisplayLawyers(filtered);
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -55,6 +51,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
             and receive quality care you can trust.
           </p>
         </div>
+
         {loading ? (
           <>
             {Array.from({ length: 4 }).map((_, i) => (
@@ -76,22 +73,24 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
         ) : (
           <div className="col-span-12">
             <div className="grid grid-cols-12 gap-4 lg:gap-16">
-              {visibleLawyers.map((lawyers) => (
-                <LawyerCard key={lawyers.uid} data={lawyers}></LawyerCard>
+              {visibleLawyers.map((lawyer) => (
+                <LawyerCard key={lawyer.uid} data={lawyer} />
               ))}
             </div>
           </div>
         )}
       </div>
-      {showingOption && <div className="flex items-center justify-center my-10">
-        <Link
-          href="/lawyers-profile"
-          className="flex items-center justify-center gap-2 rounded-full font-bold bg-(--color-primary) text-white py-[22px] px-[30px] text-[18px] cursor-pointer"
-        >
-          Show More Lawyers
-        </Link>
-      </div>
-      }
+
+      {showingOption && (
+        <div className="flex items-center justify-center my-10">
+          <Link
+            href="/lawyers-profile"
+            className="flex items-center justify-center gap-2 rounded-full font-bold bg-(--color-primary) text-white py-[22px] px-[30px] text-[18px] cursor-pointer"
+          >
+            Show More Lawyers
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

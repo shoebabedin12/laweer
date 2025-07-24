@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -31,37 +32,32 @@ export default function UserHomePage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    // if (!token) {
-    //   router.replace("/signin");
-    //   return;
-    // }
-
     const fetchData = async () => {
       try {
         // ✅ Get user info
-        const res = await axios.get<{ user: User }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/me`, {
+        const res = await axios.get<{ user: User }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const user = res.data.user;
+        const user = res.data;
         setUserData(user);
 
         // ✅ Get appointments for this user
-        const appointmentsRes = await axios.get<{ appointments: Appointment[] }>(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/appointments/user/${user.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        // const appointmentsRes = await axios.get<{ appointments: Appointment[] }>(
+        //   `${process.env.NEXT_PUBLIC_APP_API_KEY}/appointments/user/${user.id}`,
+        //   {
+        //     headers: { Authorization: `Bearer ${token}` },
+        //   }
+        // );
 
-        const sorted = appointmentsRes.data.appointments.sort((a: any, b: any) => {
-          return (
-            new Date(a.date + " " + a.time).getTime() -
-            new Date(b.date + " " + b.time).getTime()
-          );
-        });
+        // const sorted = appointmentsRes.data.appointments.sort((a: any, b: any) => {
+        //   return (
+        //     new Date(a.date + " " + a.time).getTime() -
+        //     new Date(b.date + " " + b.time).getTime()
+        //   );
+        // });
 
-        setAppointments(sorted);
+        // setAppointments(sorted);
       } catch (err) {
         console.error("Error:", err);
         Cookies.remove("token");

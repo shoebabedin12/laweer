@@ -44,11 +44,7 @@ export default function LoginComponent() {
 
         // ✅ Decode the token to get user role
         const decoded: any = jwtDecode(token);
-        const role = decoded.user?.role;
-
-        console.log(decoded);
-        console.log(role);
-        
+        const role = decoded.user?.role;        
 
         // ✅ Store token in localStorage
         localStorage.setItem("token", token);

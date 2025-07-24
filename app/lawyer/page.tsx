@@ -1,57 +1,75 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth, db } from "@/lib/firebase";
-import {
-  doc,
-  getDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import axios from "axios";
 import { FaCalendarCheck } from "react-icons/fa";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+interface User {
+  id: string;
+  name: string;
+}
+
+interface Appointment {
+  id: string;
+  date: string;
+}
+
+interface UserResponse {
+  user: User;
+}
+
+interface AppointmentsResponse {
+  appointments: Appointment[];
+}
 
 export default function LawyerHomePage() {
-  const [lawyerName, setLawyerName] = useState("Lawyer");
+  const [lawyerName, setLawyerName] = useState<any>(null);
   const [appointmentCount, setAppointmentCount] = useState(0);
+  const router = useRouter();
+  const API_BASE = process.env.NEXT_PUBLIC_APP_API_KEY;
 
   useEffect(() => {
-    const fetchLawyerDataAndAppointments = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+ 
+      try {
+        // 1. Get logged-in user info
+        const userRes = await axios.get<UserResponse>(`${API_BASE}/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const user = userRes.data.user;
+        console.log(user);
+        
+        setLawyerName(user);
 
-      // Get lawyer name
-      const docRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(docRef);
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-        setLawyerName(data.name || "Lawyer");
+        // 2. Get appointments for this lawyer
+        // const apptRes = await axios.get<AppointmentsResponse>(
+        //   `${API_BASE}/appointments/lawyer/${user.id}`,
+        //   {
+        //     headers: { Authorization: `Bearer ${token}` },
+        //   }
+        // );
+
+        // Filter upcoming appointments (today or later)
+        const today = new Date();
+        // const upcoming = apptRes.data.appointments.filter((appt: any) => {
+        //   const apptDate = new Date(appt.date);
+        //   // remove time portion for fair comparison
+        //   return apptDate >= new Date(today.toDateString());
+        // });
+
+        // setAppointmentCount(upcoming.length);
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+        router.replace("/signin");
       }
-
-      // Get appointments for this lawyer
-      const appointmentsRef = collection(db, "appointments");
-      const appointmentsQuery = query(
-        appointmentsRef,
-        where("lawyerId", "==", user.uid),
-        where("status", "in", ["pending", "approved"])
-      );
-      const snapshot = await getDocs(appointmentsQuery);
-
-      // Filter only upcoming (today or later) appointments
-      const today = new Date();
-      const upcoming = snapshot.docs.filter((doc) => {
-        const data = doc.data();
-        const appointmentDate = new Date(data.date); // assuming date is in yyyy-mm-dd format
-        return appointmentDate >= new Date(today.toDateString()); // removes time part
-      });
-
-      setAppointmentCount(upcoming.length);
     };
 
-    fetchLawyerDataAndAppointments();
-  }, []);
+    fetchData();
+  }, [router, API_BASE]);
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
