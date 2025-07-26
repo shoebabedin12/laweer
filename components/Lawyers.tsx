@@ -13,7 +13,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
   useEffect(() => {
     const fetchLawyers = async () => {
       try {
-        const res = await fetch("/api/lawyers");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`);
         if (!res.ok) throw new Error("Failed to fetch");
         const data: LawyerDataType[] = await res.json();
 
@@ -40,7 +40,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
   return (
     <div className="mb-[100px]">
       <div className="grid grid-cols-12 gap-4">
-        <div className="col-span-12 heading-section text-center">
+        <div className="col-span-12 heading-section text-center mb-10">
           <h2 className="font-mulish font-extrabold text-[40px] text-(--color-text)">
             Our Best Lawyers
           </h2>
@@ -81,7 +81,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
         )}
       </div>
 
-      {showingOption && (
+      {showingOption && displayLawyers.length > 0 && (
         <div className="flex items-center justify-center my-10">
           <Link
             href="/lawyers-profile"

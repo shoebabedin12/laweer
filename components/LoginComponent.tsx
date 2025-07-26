@@ -137,7 +137,7 @@ export default function LoginComponent() {
                 <button
                   disabled={formik.isSubmitting}
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded font-bold"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-full flex justify-center"
                 >
                   {formik.isSubmitting ? <FiLoader className="animate-spin" /> : "LOGIN"}
                 </button>

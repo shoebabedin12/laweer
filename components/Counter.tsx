@@ -1,7 +1,7 @@
 "use client";
+
 import React from "react";
 import logo01 from "./../public/assets/success-doctor.png";
-import logo02 from "./../public/assets/success-review.png";
 import logo03 from "./../public/assets/success-patients.png";
 import logo04 from "./../public/assets/success-staffs.png";
 import CountUp from "react-countup";
@@ -21,16 +21,11 @@ const Counter = () => {
       title: 'Total Lawyers'
     },{
       id: 1,
-      img: logo02,
-      count: 467,
-      title: 'Total Reviews'
-    },{
-      id: 2,
       img: logo03,
       count: 1900,
       title: 'Cases Initiated'
     },{
-      id: 3,
+      id: 2,
       img: logo04,
       count: 300,
       title: 'Total Staffs'
@@ -46,7 +41,7 @@ const Counter = () => {
           various specialties — all at your convenience.
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 py-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 py-8">
         {data.map(item=>
         <div key={item.id} className="bg-(--color-text)/5 hover:bg-(--color-text)/10 border border-(--color-text)/15 py-4 lg:py-6 xl:py-10 px-4 lg:px-6 xl:px-12 rounded-2xl transition-all duration-300 ease-linear">
           <Image src={item.img} alt={item.title} />

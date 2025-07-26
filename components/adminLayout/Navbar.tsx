@@ -62,6 +62,8 @@ const Navbar = ({ showSideNav, setShowSideNav }: SidebarProps) => {
         className="cursor-pointer"
       />
 
+      <form action="" className="invisible"></form>
+
       {(role === "user" || role === "lawyer") && (
         <>
           <a
