@@ -17,7 +17,9 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
         if (!res.ok) throw new Error("Failed to fetch");
         const data: LawyerDataType[] = await res.json();
 
-        const filtered = data.filter((doc) => doc.role === "lawyer");
+        const filtered = data;
+        console.log(filtered);
+        
         setDisplayLawyers(filtered);
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
@@ -31,11 +33,14 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
 
   useEffect(() => {
     if (showingOption) {
-      setVisibleLawyers(displayLawyers.slice(0, showingOption));
+      setVisibleLawyers(displayLawyers?.lawyers.slice(0, showingOption));
     } else {
       setVisibleLawyers(displayLawyers);
     }
   }, [displayLawyers, showingOption]);
+
+  // console.log(visibleLawyers);
+  
 
   return (
     <div className="mb-[100px]">
@@ -81,7 +86,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
         )}
       </div>
 
-      {showingOption && displayLawyers.length > 0 && (
+      {showingOption && displayLawyers.total > 0 && (
         <div className="flex items-center justify-center my-10">
           <Link
             href="/lawyers-profile"
