@@ -20,10 +20,10 @@ const NavBar = () => {
     setMenuShow(prev => !prev);
   };
 
-const offCanvasMenu = () => {
-  setMenuShow(false); // Close the motion div
-  document.body.style.overflow = ''; // Restore scroll
-};
+  const offCanvasMenu = () => {
+    setMenuShow(false); // Close the motion div
+    document.body.style.overflow = ''; // Restore scroll
+  };
 
   useEffect(() => {
     const updatePosition = () => {
@@ -45,7 +45,7 @@ const offCanvasMenu = () => {
         <div className="container">
           <div className="flex items-center justify-between py-6">
             <Link href="/" className="flex items-center gap-1 md:gap-4">
-              <Image src={logo} alt="" className="w-6 h-6"/>
+              <Image src={logo} alt="" className="w-6 h-6" />
               <h1 className="lg:text-3xl lg:font-extrabold text-lg font-plus_jakarta_sans font-bold text-(--color-text)">
                 Law.BD
               </h1>
@@ -82,16 +82,16 @@ const offCanvasMenu = () => {
           </div>
         </div>
       </header>
-      <motion.div 
-      initial={{ scaleX: 0, opacity: 0 }}
+      <motion.div
+        initial={{ scaleX: 0, opacity: 0 }}
         animate={{ scaleX: menuShow ? 1 : 0, opacity: menuShow ? 1 : 0 }}
         transition={{ duration: 0.2, ease: 'easeOut' }} className="fixed top-0 right-0 z-50 w-full h-full min-h-screen py-6 px-4 overflow-y-auto backdrop-blur-[31px] bg-white/80 origin-right">
         <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-2 bg-gray-700 text-white rounded-md"
-            >
-              <IoMdClose className="text-[30px] text-white cursor-pointer" onClick={offCanvasMenu} aria-expanded={menuShow} />
-            </button>
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 p-2 bg-gray-700 text-white rounded-md"
+        >
+          <IoMdClose className="text-[30px] text-white cursor-pointer" onClick={offCanvasMenu} aria-expanded={menuShow} />
+        </button>
         <ul className="mt-12 space-y-4 flex flex-col items-center justify-center">
           {navbar.map((item) => (
             <li key={item.id}>

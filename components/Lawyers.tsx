@@ -30,10 +30,11 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
 
     fetchLawyers();
   }, []);
+  
 
   useEffect(() => {
     if (showingOption) {
-      setVisibleLawyers(displayLawyers?.lawyers.slice(0, showingOption));
+      setVisibleLawyers(displayLawyers.total > 0 && displayLawyers.lawyers.slice(0, showingOption));
     } else {
       setVisibleLawyers(displayLawyers);
     }
