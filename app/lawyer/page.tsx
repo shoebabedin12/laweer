@@ -41,7 +41,6 @@ export default function LawyerHomePage() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const user = userRes.data.user;
-        console.log(user);
         
         setLawyerName(user);
 
@@ -71,17 +70,20 @@ export default function LawyerHomePage() {
     fetchData();
   }, [router, API_BASE]);
 
+  console.log(lawyerName);
+  
+
   return (
     <div className="min-h-screen p-6 bg-gray-50">
-      <div className="max-w-5xl mx-auto">
+      <div className="grid grid-cols-12 gap-4">
         {/* Welcome Section */}
-        <div className="bg-white p-6 rounded-lg shadow mb-8">
+        <div className="col-span-6 bg-white p-6 rounded-lg shadow">
           <h1 className="text-3xl font-bold mb-2">Welcome, {lawyerName} 👋</h1>
           <p className="text-gray-600">Here’s your overview for today.</p>
         </div>
 
         {/* Quick Action Cards */}
-        <div className="grid grid-cols-1 gap-6">
+        <div className="col-span-6">
           <ActionCard
             title="Upcoming Appointments"
             icon={<FaCalendarCheck className="text-blue-600" size={32} />}

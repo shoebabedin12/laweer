@@ -11,34 +11,33 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLawyers = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`);
-        if (!res.ok) throw new Error("Failed to fetch");
-        const data: LawyerDataType[] = await res.json();
+  const fetchLawyers = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
 
-        const filtered = data;
-        console.log(filtered);
-        
-        setDisplayLawyers(filtered);
-      } catch (error) {
-        console.error("Failed to fetch lawyers:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      // Assuming API response looks like: { total: number, lawyers: LawyerDataType[] }
+      setDisplayLawyers(data.lawyers || []); // only store array in state
+    } catch (error) {
+      console.error("Failed to fetch lawyers:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchLawyers();
-  }, []);
+  fetchLawyers();
+}, []);
+
   
 
-  useEffect(() => {
-    if (showingOption) {
-      setVisibleLawyers(displayLawyers.total > 0 && displayLawyers.lawyers.slice(0, showingOption));
-    } else {
-      setVisibleLawyers(displayLawyers);
-    }
-  }, [displayLawyers, showingOption]);
+useEffect(() => {
+  if (showingOption) {
+    setVisibleLawyers(displayLawyers.slice(0, showingOption));
+  } else {
+    setVisibleLawyers(displayLawyers);
+  }
+}, [displayLawyers, showingOption]);
 
   // console.log(visibleLawyers);
   
@@ -79,7 +78,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
         ) : (
           <div className="col-span-12">
             <div className="grid grid-cols-12 gap-4 lg:gap-16">
-              {visibleLawyers.map((lawyer) => (
+              {visibleLawyers?.map((lawyer) => (
                 <LawyerCard key={lawyer.uid} data={lawyer} />
               ))}
             </div>
@@ -87,7 +86,7 @@ const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
         )}
       </div>
 
-      {showingOption && displayLawyers.total > 0 && (
+      {showingOption && displayLawyers.length > 0 && (
         <div className="flex items-center justify-center my-10">
           <Link
             href="/lawyers-profile"
