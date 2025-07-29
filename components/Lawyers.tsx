@@ -1,46 +1,61 @@
-'use client';
+// import LawyerCard from "./LawyerCard";
+// import { useState } from "react";
+// import { LawyerDataType } from "@/types/DataTypes";
+// import Link from "next/link";
 
-import LawyerCard from "./LawyerCard";
-import { useEffect, useState } from "react";
-import { LawyeersPropTypes, LawyerDataType } from "@/types/DataTypes";
-import Link from "next/link";
+export default async function LawyersPage({ showingOption }: Props) {
+  // const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
+  // const [visibleLawyers, setVisibleLawyers] = useState<LawyerDataType[]>([]);
+  // const [loading, setLoading] = useState(true);
 
-const Lawyers = ({ showingOption }: LawyeersPropTypes) => {
-  const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
-  const [visibleLawyers, setVisibleLawyers] = useState<LawyerDataType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`, {
+    cache: 'no-store',
+  });
 
-  useEffect(() => {
-  const fetchLawyers = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`);
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-
-      // Assuming API response looks like: { total: number, lawyers: LawyerDataType[] }
-      setDisplayLawyers(data.lawyers || []); // only store array in state
-    } catch (error) {
-      console.error("Failed to fetch lawyers:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchLawyers();
-}, []);
-
-  
-
-useEffect(() => {
-  if (showingOption) {
-    setVisibleLawyers(displayLawyers.slice(0, showingOption));
-  } else {
-    setVisibleLawyers(displayLawyers);
+   if (!res.ok) {
+    throw new Error('Failed to fetch lawyers');
   }
-}, [displayLawyers, showingOption]);
+
+   const data = await res.json();
+    const lawyers = data.lawyers || [];
+
+  // Filter according to showingOption
+  const visibleLawyers = showingOption ? lawyers.slice(0, showingOption) : lawyers;
+
+   console.log(data);
+   console.log(visibleLawyers);
+   
+
+  // useEffect(() => {
+  //   const fetchLawyers = async () => {
+  //     try {
+  //       const res = await fetch(
+  //         `${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`
+  //       );
+  //       if (!res.ok) throw new Error("Failed to fetch");
+  //       const data = await res.json();
+
+  //       // Assuming API response looks like: { total: number, lawyers: LawyerDataType[] }
+  //       setDisplayLawyers(data.lawyers || []); // only store array in state
+  //     } catch (error) {
+  //       console.error("Failed to fetch lawyers:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchLawyers();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (showingOption) {
+  //     setVisibleLawyers(displayLawyers.slice(0, showingOption));
+  //   } else {
+  //     setVisibleLawyers(displayLawyers);
+  //   }
+  // }, [displayLawyers, showingOption]);
 
   // console.log(visibleLawyers);
-  
 
   return (
     <div className="mb-[100px]">
@@ -57,7 +72,7 @@ useEffect(() => {
           </p>
         </div>
 
-        {loading ? (
+        {/* {loading ? (
           <>
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="col-span-12 md:col-span-6 animate-pulse">
@@ -83,10 +98,10 @@ useEffect(() => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </div>
 
-      {showingOption && displayLawyers.length > 0 && (
+      {/* {showingOption && displayLawyers.length > 0 && (
         <div className="flex items-center justify-center my-10">
           <Link
             href="/lawyers-profile"
@@ -95,9 +110,7 @@ useEffect(() => {
             Show More Lawyers
           </Link>
         </div>
-      )}
+      )}  */}
     </div>
   );
-};
-
-export default Lawyers;
+}
