@@ -1,8 +1,7 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import { useState, useEffect, useRef } from "react";
-import { db } from "@/lib/firebase";
-import { addDoc, collection, getDocs } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -11,7 +10,7 @@ import DatePicker from "react-datepicker";
 import { useUser } from "@/context/UserContext";
 
 export default function AppointmentBooking() {
-  const { id } = useParams();
+   const { id } = useParams();
   const [lawyers, setLawyers] = useState<any[]>([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -19,7 +18,7 @@ export default function AppointmentBooking() {
   const [selectedLawyer, setSelectedLawyer] = useState<any>(null);
   const [bookedSlotsByDate, setBookedSlotsByDate] = useState<{ [key: string]: string[] }>({});
   const [error, setError] = useState("");
- const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
   const { userId } = useUser();
 
@@ -43,27 +42,45 @@ export default function AppointmentBooking() {
     };
     fetchLawyers();
   }, []);
+useEffect(() => {
+    const fetchLawyers = async () => {
+      try {
+        const res = await fetch("/api/lawyers");
+        const data = await res.json();
+        setLawyers(data);
+
+        if (id) {
+          const matched = data.find((lawyer: any) => lawyer.id === id);
+          if (matched) {
+            setSelectedLawyer(matched);
+            setDropdownOpen(false);
+          }
+        }
+      } catch (err) {
+        toast.error("Failed to fetch lawyers");
+      }
+    };
+    fetchLawyers();
+  }, []);
 
   useEffect(() => {
     const fetchBookedSlots = async () => {
       if (!selectedLawyer) return;
 
-      const snapshot = await getDocs(collection(db, "appointments"));
-      const bookings = snapshot.docs
-        .map((doc) => doc.data())
-        .filter(
-          (doc: any) =>
-            doc.lawyerId === selectedLawyer.id &&
-            doc.status === "approved"
-        );
+      try {
+        const res = await fetch(`/api/appointments/${selectedLawyer.id}`);
+        const bookings = await res.json();
 
-      const groupedByDate: { [key: string]: string[] } = {};
-      bookings.forEach((b: any) => {
-        if (!groupedByDate[b.date]) groupedByDate[b.date] = [];
-        groupedByDate[b.date].push(b.time);
-      });
+        const grouped: { [key: string]: string[] } = {};
+        bookings.forEach((b: any) => {
+          if (!grouped[b.date]) grouped[b.date] = [];
+          grouped[b.date].push(b.time);
+        });
 
-      setBookedSlotsByDate(groupedByDate);
+        setBookedSlotsByDate(grouped);
+      } catch (err) {
+        toast.error("Failed to fetch booked slots");
+      }
     };
 
     fetchBookedSlots();
@@ -83,19 +100,26 @@ export default function AppointmentBooking() {
     }
 
     try {
-      await addDoc(collection(db, "appointments"), {
-        userId,
-        lawyerId: selectedLawyer.id,
-        date,
-        time,
-        status: "pending",
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          lawyerId: selectedLawyer.id,
+          date,
+          time,
+        }),
       });
+
+      if (!res.ok) throw new Error("Booking failed");
 
       toast.success("Appointment booked successfully!");
       router.push("/users/");
-    } catch (error) {
+    } catch (err) {
       toast.error("Booking failed!");
-      console.error("Booking Error:", error);
+      console.error("Booking Error:", err);
     }
   };
 

@@ -53,7 +53,7 @@ export default function LawyerHomePage() {
         // );
 
         // Filter upcoming appointments (today or later)
-        const today = new Date();
+        // const today = new Date();
         // const upcoming = apptRes.data.appointments.filter((appt: any) => {
         //   const apptDate = new Date(appt.date);
         //   // remove time portion for fair comparison
