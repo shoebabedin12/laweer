@@ -36,6 +36,7 @@ export default function RoleProtectedLayout({
             Authorization: `Bearer ${token}`,
           },
         });
+        
 
         if (!res.ok) {
           router.replace(redirectTo);
@@ -44,12 +45,16 @@ export default function RoleProtectedLayout({
 
         const data = await res.json();
 
-        if (data?.role !== allowedRole) {
+        console.log(data);
+        
+        
+
+        if (data?.data.role !== allowedRole) {
           router.replace(redirectTo);
           return;
         }
 
-        setRole(data.role);
+        setRole(data.data.role);
         setLoading(false);
       } catch (error) {
         console.error("Authorization check failed:", error);

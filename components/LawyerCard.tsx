@@ -48,10 +48,13 @@ const LawyerCard = ({ data}: LawyeerDetailsPropTypes) => {
                 <span className="relative inline-flex size-3 rounded-full bg-primary"></span>
               </span>}
              <Image className="w-full h-full object-cover rounded-2xl"
-                src={data.profileImage || ''}
+                src={data.profileImage || '/assets/lawyer.png'}
                 alt={data?.name || "Name"}
                 width={159}
                 height={158}
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL={data.profileImage || '/assets/lawyer.png'}
               />
             </div>
           </div>

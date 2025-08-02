@@ -69,8 +69,6 @@ export default function LawyerHomePage() {
 
     fetchData();
   }, [router, API_BASE]);
-
-  console.log(lawyerName);
   
 
   return (

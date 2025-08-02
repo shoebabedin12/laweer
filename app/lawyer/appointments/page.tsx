@@ -8,12 +8,11 @@ interface User {
   id: string;
   name: string;
   profileImage?: string | null;
-  // Add more fields if needed
 }
 
 interface Appointment {
   id: string;
-  userId: string;
+  // userId: string;
   lawyerId: string;
   date: string; // yyyy-mm-dd
   time: string; // HH:mm
@@ -52,17 +51,18 @@ export default function LawyerAppointmentsPage() {
 
       // Fetch appointments for this lawyer
       const apptRes = await axios.get<Appointment[]>(
-        `${process.env.NEXT_PUBLIC_APP_API_KEY}/appointments?lawyerId=${lawyerId}`,
+        `${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers/appointments`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Fetch all users (clients)
-      const userRes = await axios.get<User[]>(
-        `${process.env.NEXT_PUBLIC_APP_API_KEY}/users`,
+      const userRes = await axios.get<User[]>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+console.log(userRes.data.data);
 
       const usersMap: Record<string, User> = {};
+
       userRes.data.forEach((user) => {
         usersMap[user.id] = user;
       });
@@ -83,7 +83,7 @@ export default function LawyerAppointmentsPage() {
           return dateB.getTime() - dateA.getTime();
         });
 
-      setAppointments(data);
+      // setAppointments(data);
       toast.info("Appointment list refreshed");
     } catch (error) {
       console.error(error);

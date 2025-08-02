@@ -11,7 +11,7 @@ import {
   BsFillPeopleFill,
 } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { FaUserTie } from "react-icons/fa";
+import { FaCalendarAlt, FaUserTie } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 
 const Sidebar = ({ showSideNav, role }: SidebarProps) => {
@@ -65,7 +65,7 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
           {
             href: "/lawyer/appointments",
             label: "Appointments",
-            icon: <MdDashboard />,
+            icon: <FaCalendarAlt />,
             key: "/lawyer/appointments",
           },
           {

@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export type LawyerDataType = {
-  uid?: string;
+  id?: string;
   name?: string;
   email?: string;
   specialization?: string;

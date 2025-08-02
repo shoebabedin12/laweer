@@ -31,7 +31,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         const res = await axios.get<MeResponse>(`${API_BASE}/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUserId(res.data.id.toString());
+        setUserId(res.data.data.id.toString());
       } catch (err) {
         console.error("Failed to load user", err);
         setUserId(null);

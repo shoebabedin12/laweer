@@ -33,6 +33,7 @@ export default function LoginComponent() {
       password: "",
     },
     validationSchema: LoginSchema,
+
     onSubmit: async (values, { resetForm }) => {
       try {
         const response = await axios.post<{ token: string }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/login`, {
@@ -41,10 +42,12 @@ export default function LoginComponent() {
         });
 
         const { token } = response.data;
+        
 
         // ✅ Decode the token to get user role
         const decoded: any = jwtDecode(token);
-        const role = decoded.user?.role;        
+        const role = decoded.role;
+            
 
         // ✅ Store token in localStorage
         localStorage.setItem("token", token);
@@ -54,13 +57,10 @@ export default function LoginComponent() {
 
         // ✅ Redirect based on role
         if (role === "admin") {
-          console.log(role);
           router.push("/admin");
         } else if (role === "lawyer") {
-          console.log(role);
           router.push("/lawyer");
         } else {
-          console.log(role);
           router.push(redirectTo || "/users");
         }
       } catch (err: any) {

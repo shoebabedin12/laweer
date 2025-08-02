@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import { MdModeEdit } from "react-icons/md";
 
 const weekdays = [
@@ -18,6 +19,7 @@ const weekdays = [
 ];
 
 export default function LawyerProfilePage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [specialization, setSpecialization] = useState("");
@@ -26,52 +28,56 @@ export default function LawyerProfilePage() {
   const [availableDays, setAvailableDays] = useState<string[]>([]);
   const [timeSlots, setTimeSlots] = useState<string[]>([""]);
   const [previewImageData, setPreviewImageData] = useState<string>("");
-  const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
 
-  // Replace with your auth method to get logged-in lawyer ID & token
-  // const lawyerId = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-    // if (!lawyerId) {
-    //   router.replace("/signin");
-    //   return;
-    // }
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []);
 
-    // const fetchUser = async () => {
-    //   try {
-    //     setLoading(true);
-        // const res = await axios.get(`${process.env.NEXT_PUBLIC_APP_API_KEY}/users/${lawyerId}`, {
-        //   headers: { Authorization: `Bearer ${token}` },
-        // });
-        // const data = res.data;
-        // setName(data.name || "");
-        // setSpecialization(data.specialization || "");
-        // setExperience(data.experience || "");
-        // setDescription(data.description || "");
-        // setAvailableDays(data.availableDays || []);
-        // setTimeSlots(data.availableTimeSlots?.length ? data.availableTimeSlots : [""]);
-        // setPreviewImageData(data.profileImage || "");
-      // } catch (error) {
-      //   toast.error("Failed to load profile data");
-        // router.replace("/signin");
-      // } finally {
-      //   setLoading(false);
-      // }
-    // };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
 
-  //   fetchUser();
-  // }, [lawyerId, router, token]);
+        console.log(data);
+        
+
+        setName(data.name || "");
+        setSpecialization(data.specialization || "");
+        setExperience(data.experience || "");
+        setDescription(data.description || "");
+        setAvailableDays(data.availableDays || []);
+        setTimeSlots(
+          data.availableTimeSlots?.length ? data.availableTimeSlots : [""]
+        );
+        setPreviewImageData(data.profileImage || "");
+      } catch (err) {
+        toast.error("Failed to load profile data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [router, token]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (!lawyerId) return;
 
     try {
       setLoading(true);
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_APP_API_KEY}/me`,
-        {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
           name: name.trim(),
           specialization,
           experience,
@@ -79,11 +85,11 @@ export default function LawyerProfilePage() {
           availableDays,
           availableTimeSlots: timeSlots,
           profileImage: previewImageData,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Update failed");
 
       toast.success("Profile updated successfully");
     } catch (error: any) {
@@ -150,7 +156,11 @@ export default function LawyerProfilePage() {
           <div className="avatar-preview">
             <div
               id="imagePreview"
-              style={{ backgroundImage: `url(${previewImageData})` }}
+              style={{
+                backgroundImage: `url(${
+                  previewImageData || "/assets/lawyer.png"
+                })`,
+              }}
               className="w-32 h-32 rounded-full bg-gray-200 bg-center bg-cover"
             ></div>
           </div>

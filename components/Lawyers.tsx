@@ -1,61 +1,26 @@
-// import LawyerCard from "./LawyerCard";
-// import { useState } from "react";
-// import { LawyerDataType } from "@/types/DataTypes";
-// import Link from "next/link";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { LawyeersPropTypes } from "@/types/DataTypes";
+import LawyerCard from "./LawyerCard";
+import Link from "next/link";
 
-export default async function LawyersPage({ showingOption }: Props) {
-  // const [displayLawyers, setDisplayLawyers] = useState<LawyerDataType[]>([]);
-  // const [visibleLawyers, setVisibleLawyers] = useState<LawyerDataType[]>([]);
-  // const [loading, setLoading] = useState(true);
-
+export default async function LawyersPage({
+  showingOption,
+}: LawyeersPropTypes) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`, {
-    cache: 'no-store',
+    cache: "no-store",
   });
 
-   if (!res.ok) {
-    throw new Error('Failed to fetch lawyers');
+  if (!res.ok) {
+    throw new Error("Failed to fetch lawyers");
   }
 
-   const data = await res.json();
-    const lawyers = data.lawyers || [];
+  const data = await res.json();
+  const lawyers = data.lawyers || [];
 
   // Filter according to showingOption
-  const visibleLawyers = showingOption ? lawyers.slice(0, showingOption) : lawyers;
-
-   console.log(data);
-   console.log(visibleLawyers);
-   
-
-  // useEffect(() => {
-  //   const fetchLawyers = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         `${process.env.NEXT_PUBLIC_APP_API_KEY}/lawyers`
-  //       );
-  //       if (!res.ok) throw new Error("Failed to fetch");
-  //       const data = await res.json();
-
-  //       // Assuming API response looks like: { total: number, lawyers: LawyerDataType[] }
-  //       setDisplayLawyers(data.lawyers || []); // only store array in state
-  //     } catch (error) {
-  //       console.error("Failed to fetch lawyers:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchLawyers();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (showingOption) {
-  //     setVisibleLawyers(displayLawyers.slice(0, showingOption));
-  //   } else {
-  //     setVisibleLawyers(displayLawyers);
-  //   }
-  // }, [displayLawyers, showingOption]);
-
-  // console.log(visibleLawyers);
+  const visibleLawyers = showingOption
+    ? lawyers.slice(0, showingOption)
+    : lawyers;
 
   return (
     <div className="mb-[100px]">
@@ -72,36 +37,41 @@ export default async function LawyersPage({ showingOption }: Props) {
           </p>
         </div>
 
-        {/* {loading ? (
-          <>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="col-span-12 md:col-span-6 animate-pulse">
-                <div className="bg-base-100 border border-(--color-text)/15 rounded-2xl grid grid-cols-12 p-6 gap-4">
-                  <div className="col-span-12 lg:col-span-4">
-                    <div className="bg-gray-300 rounded-2xl w-full h-[158px]" />
-                  </div>
-                  <div className="col-span-12 lg:col-span-8 space-y-3">
-                    <div className="h-4 bg-gray-300 rounded w-1/4" />
-                    <div className="h-6 bg-gray-300 rounded w-2/3" />
-                    <div className="h-4 bg-gray-300 rounded w-1/2" />
-                    <div className="h-10 bg-gray-300 rounded w-full mt-4" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </>
-        ) : (
+        {visibleLawyers.length > 0 ? (
           <div className="col-span-12">
             <div className="grid grid-cols-12 gap-4 lg:gap-16">
-              {visibleLawyers?.map((lawyer) => (
-                <LawyerCard key={lawyer.uid} data={lawyer} />
+              {visibleLawyers?.map((lawyer: any) => (
+                <LawyerCard key={lawyer.id} data={lawyer} />
               ))}
             </div>
           </div>
-        )} */}
+        ) : (
+          <>
+            {typeof showingOption === "number" &&
+              showingOption > 0 &&
+              Array.from({ length: showingOption }).map((_, i) => (
+                <div
+                  key={i}
+                  className="col-span-12 md:col-span-6 animate-pulse"
+                >
+                  <div className="bg-base-100 border border-(--color-text)/15 rounded-2xl grid grid-cols-12 p-6 gap-4">
+                    <div className="col-span-12 lg:col-span-4">
+                      <div className="bg-gray-300 rounded-2xl w-full h-[158px]" />
+                    </div>
+                    <div className="col-span-12 lg:col-span-8 space-y-3">
+                      <div className="h-4 bg-gray-300 rounded w-1/4" />
+                      <div className="h-6 bg-gray-300 rounded w-2/3" />
+                      <div className="h-4 bg-gray-300 rounded w-1/2" />
+                      <div className="h-10 bg-gray-300 rounded w-full mt-4" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </>
+        )}
       </div>
 
-      {/* {showingOption && displayLawyers.length > 0 && (
+      {showingOption && visibleLawyers.length > 0 && (
         <div className="flex items-center justify-center my-10">
           <Link
             href="/lawyers-profile"
@@ -110,7 +80,7 @@ export default async function LawyersPage({ showingOption }: Props) {
             Show More Lawyers
           </Link>
         </div>
-      )}  */}
+      )}
     </div>
   );
 }

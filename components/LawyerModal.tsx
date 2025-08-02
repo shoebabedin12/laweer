@@ -5,16 +5,16 @@ import React from "react";
 import Image from "next/image";
 import { getTodayAvailabilityStatus } from "@/utility/avaiabilityCheck";
 import { toast } from "react-toastify";
-import { useAuth } from "@/context/AuthContext"; // ✅ Custom Auth Context
+// import { useAuth } from "@/context/AuthContext"; // ✅ Custom Auth Context
 import { useRouter } from "next/navigation";
 
 const LawyerModal = ({ data, onClose }: any) => {
   const router = useRouter();
-  const { user } = useAuth(); // ✅ Use your custom auth hook
+  // const { user } = useAuth();
 
   if (!data) return null;
 
-  const { uid, name, profileImage, specialization, experience, availableDays } =
+  const { id, name, profileImage, specialization, experience, availableDays } =
     data;
 
   const { today, isAvailable } = getTodayAvailabilityStatus(availableDays);
@@ -22,13 +22,13 @@ const LawyerModal = ({ data, onClose }: any) => {
   const handleBooking = () => {
     if (!isAvailable) return;
 
-    if (!user) {
-      toast.error("Please log in for appointment.");
-      router.push(`/signin?redirectTo=/users/appointments/${uid}`);
-      return;
-    }
+    // if (!user) {
+    toast.error("Please log in for appointment.");
+    router.push(`/signin?redirectTo=/users/appointments/${id}`);
+    return;
+    // }
 
-    router.push(`/users/appointments/${uid}`);
+    router.push(`/users/appointments/${id}`);
   };
 
   return (
@@ -44,9 +44,11 @@ const LawyerModal = ({ data, onClose }: any) => {
         </div>
         <figure>
           <Image
-            src={profileImage}
+            src={profileImage || "/assets/lawyer.png"}
             alt={name}
             loading="lazy"
+            placeholder="blur"
+            blurDataURL={profileImage || "/assets/lawyer.png"}
             width={308}
             height={308}
             className="rounded-xl w-full max-w-[308px] h-[308px] object-cover"
