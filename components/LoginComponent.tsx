@@ -5,10 +5,10 @@ import Image from "next/image";
 import logo from "../public/assets/logo.png";
 import { GithubButton } from "./github-sign-in-button";
 import { GoogleButton } from "./GoogleButton";
+import { credentialslogin } from "@/lib/actions/auth";
 
 
 export default async function LoginComponent() {
-  
 
   return (
     <>
@@ -26,12 +26,12 @@ export default async function LoginComponent() {
       <div className="my-[100px]">
         <div className="container">
           <div className="shadow-2xl max-w-[600px] mx-auto rounded-2xl py-5 px-8">
-            <form action="" className="grid grid-cols-12 gap-4 mb-5">
+            <form action={(formData) => { credentialslogin(formData)}} className="grid grid-cols-12 gap-4 mb-5">
               <div className="col-span-12">
                 <label htmlFor="email">Email</label>
                 <input type="email" id="email" className="outline-1 w-full py-2 px-3 mt-2 rounded-md" placeholder="Enter your email" />
               </div>
-               <div className="col-span-12">
+              <div className="col-span-12">
                 <label htmlFor="password">Password</label>
                 <input type="password" id="password" className="outline-1 w-full py-2 px-3 mt-2 rounded-md" placeholder="Enter your password" />
               </div>
@@ -39,8 +39,8 @@ export default async function LoginComponent() {
                 <button type="submit" className="bg-primary py-2 px-5 w-full rounded-md text-white cursor-pointer">Login</button>
               </div>
             </form>
-            <GithubButton/>
-            <GoogleButton/>
+            <GithubButton />
+            <GoogleButton />
           </div>
         </div>
       </div>

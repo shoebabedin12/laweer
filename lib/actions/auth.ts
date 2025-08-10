@@ -15,3 +15,10 @@ export const googlelogin = async () => {
 export const googlelogout = async () => {
     await signOut({redirectTo: '/'})
 }
+
+export const credentialslogin = async () => {
+    await signIn("credentials", {redirectTo: '/'})
+}
+export const credentialslogout = async () => {
+    await signOut({redirectTo: '/'})
+}
