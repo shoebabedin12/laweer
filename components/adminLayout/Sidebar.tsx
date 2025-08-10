@@ -129,15 +129,17 @@ const Sidebar = ({ showSideNav, role }: SidebarProps) => {
         </li> */}
         <li>
           {/* Use button for logout action */}
-          <button
+          <Link href={'#'}
             type="button"
             className="logout flex items-center gap-2"
             onClick={handleLogout}
             aria-label="Logout"
           >
+            <i className="bx">
             <BsPower size={18} />
+            </i>
             <span className="text">Logout</span>
-          </button>
+          </Link>
         </li>
       </ul>
     </section>

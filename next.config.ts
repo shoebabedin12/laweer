@@ -8,10 +8,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'i.ibb.co.com',
-      },{
-        protocol: 'https',
-        hostname: 'placehold.co',
+        hostname: 'avatars.githubusercontent.com',
       },
     ],
   },

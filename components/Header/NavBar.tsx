@@ -14,7 +14,6 @@ const NavBar = () => {
   const [scrollPosition, setPosition] = useState({ scrollY: 0 });
   const [menuShow, setMenuShow] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [canvasShow, setCanvasShow] = useState(false);
 
   const toggleMenu = () => {
     setMenuShow(prev => !prev);
@@ -66,11 +65,11 @@ const NavBar = () => {
               </ul>
             </div>
             <div className="flex items-center justify-end gap-4">
-              <span
+             { <span
                 className="btn rounded-full font-bold bg-[#0EA106] text-white py-2 lg:py-[15px] px-2 lg:px-[30px] text-sm lg:text-[18px]"
               >
                 <Link href={'/signup'} className="relative inline-block after:block after:content-[''] after:h-[2px] after:bg-white after:transition-[width] after:duration-300 hover:after:w-full after:w-0">Register</Link> | <Link href={'/signin'} className="relative inline-block after:block after:content-[''] after:h-[2px] after:bg-white after:transition-[width] after:duration-300 hover:after:w-full after:w-0">Login</Link>
-              </span>
+              </span>}
               <div className="hamburgur block lg:hidden">
                 <RxHamburgerMenu
                   className="text-[30px] text-primary cursor-pointer"

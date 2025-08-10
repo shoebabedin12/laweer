@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import axios from "axios";
@@ -11,6 +13,7 @@ interface User {
 }
 
 interface Appointment {
+  [x: string]: any;
   id: string;
   // userId: string;
   lawyerId: string;
@@ -59,7 +62,6 @@ export default function LawyerAppointmentsPage() {
       const userRes = await axios.get<User[]>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-console.log(userRes.data.data);
 
       const usersMap: Record<string, User> = {};
 

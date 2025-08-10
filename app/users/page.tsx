@@ -1,93 +1,38 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { FaUserCircle, FaCalendarCheck } from "react-icons/fa";
-import axios from "axios";
-import Cookies from "js-cookie";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "../api/auth/[...nextauth]/route";
+// import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
 
-interface Appointment {
-  id: string;
-  date: string;
-  time: string;
-  status: "pending" | "approved" | "rejected";
-  lawyerName: string;
-}
+export default async function UserHomePage() {
+  // const session = await getServerSession(authOptions);
 
-export default function UserHomePage() {
-  const [userData, setUserData] = useState<any>(null);
-  const [appointments, setAppointments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    const fetchData = async () => {
-      try {
-        // ✅ Get user info
-        const res = await axios.get<{ user: User }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const user = res.data;
-        setUserData(user);
-
-        // ✅ Get appointments for this user
-        // const appointmentsRes = await axios.get<{ appointments: Appointment[] }>(
-        //   `${process.env.NEXT_PUBLIC_APP_API_KEY}/appointments/user/${user.id}`,
-        //   {
-        //     headers: { Authorization: `Bearer ${token}` },
-        //   }
-        // );
-
-        // const sorted = appointmentsRes.data.appointments.sort((a: any, b: any) => {
-        //   return (
-        //     new Date(a.date + " " + a.time).getTime() -
-        //     new Date(b.date + " " + b.time).getTime()
-        //   );
-        // });
-
-        // setAppointments(sorted);
-      } catch (err) {
-        console.error("Error:", err);
-        Cookies.remove("token");
-        router.replace("/signin");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [router]);
-
-  if (loading) return <div className="text-center py-10">Loading...</div>;
+  //    if (!session) {
+  //      redirect("/auth/signin");
+  //    }
+    const session = await auth();
+  console.log(session);
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">
+      {/* <h1 className="text-3xl font-bold mb-6">
         Welcome, {userData?.name || "User"} 👋
-      </h1>
+      </h1> */}
+       <h1>Welcome, {session.user?.name}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 🧑 Profile */}
         <div className="bg-white shadow-md rounded-xl p-6 flex items-start gap-x-4">
           <FaUserCircle className="text-5xl text-gray-400" />
           <div>
-            <h2 className="text-xl font-semibold">{userData?.name}</h2>
+            {/* <h2 className="text-xl font-semibold">{userData?.name}</h2>
             <p className="text-gray-600">{userData?.email}</p>
             <p className="mt-2 font-medium">
               Role: <span className="text-gray-800">{userData?.role}</span>
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -98,7 +43,7 @@ export default function UserHomePage() {
             <h2 className="text-xl font-bold">Upcoming Appointments</h2>
           </div>
 
-          {appointments.length > 0 ? (
+          {/* {appointments.length > 0 ? (
             <div className="space-y-4 overflow-y-auto max-h-[800px]">
               {appointments.map((a) => (
                 <div
@@ -136,7 +81,7 @@ export default function UserHomePage() {
             </div>
           ) : (
             <p className="text-gray-600">No appointments found.</p>
-          )}
+          )} */}
         </div>
       </div>
     </div>
