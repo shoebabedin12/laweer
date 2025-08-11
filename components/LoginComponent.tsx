@@ -26,7 +26,7 @@ export default async function LoginComponent() {
       <div className="my-[100px]">
         <div className="container">
           <div className="shadow-2xl max-w-[600px] mx-auto rounded-2xl py-5 px-8">
-            <form action={(formData) => { credentialslogin(formData)}} className="grid grid-cols-12 gap-4 mb-5">
+            <form action={''} className="grid grid-cols-12 gap-4 mb-5">
               <div className="col-span-12">
                 <label htmlFor="email">Email</label>
                 <input type="email" id="email" className="outline-1 w-full py-2 px-3 mt-2 rounded-md" placeholder="Enter your email" />
