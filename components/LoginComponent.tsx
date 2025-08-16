@@ -1,11 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../public/assets/logo.png";
-import { GithubButton } from "./github-sign-in-button";
-import { GoogleButton } from "./GoogleButton";
-import { credentialslogin } from "@/lib/actions/auth";
 
 
 export default async function LoginComponent() {
@@ -39,8 +34,6 @@ export default async function LoginComponent() {
                 <button type="submit" className="bg-primary py-2 px-5 w-full rounded-md text-white cursor-pointer">Login</button>
               </div>
             </form>
-            <GithubButton />
-            <GoogleButton />
           </div>
         </div>
       </div>

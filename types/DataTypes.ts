@@ -71,3 +71,15 @@ export interface FirestoreUser {
   profileImage?: string;
 };
 
+export interface FormProps {
+  name: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+  role: string;
+}
+
+export interface MessageState {
+  type: "error" | "success";
+  text: string;
+}

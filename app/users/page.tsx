@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FaUserCircle, FaCalendarCheck } from "react-icons/fa";
 // import { getServerSession } from "next-auth";
 // import { authOptions } from "../api/auth/[...nextauth]/route";
 // import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 
 
 export default async function UserHomePage() {
@@ -13,15 +11,13 @@ export default async function UserHomePage() {
   //    if (!session) {
   //      redirect("/auth/signin");
   //    }
-    const session = await auth();
-  console.log(session);
+
 
   return (
     <div className="p-6">
       {/* <h1 className="text-3xl font-bold mb-6">
         Welcome, {userData?.name || "User"} 👋
       </h1> */}
-       <h1>Welcome, {session.user?.name}</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* 🧑 Profile */}

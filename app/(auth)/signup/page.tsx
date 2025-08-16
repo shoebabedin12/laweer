@@ -1,77 +1,63 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useState } from "react";
-import { FiLoader } from "react-icons/fi";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+// import { useFormik } from "formik";
+// import * as Yup from "yup";
+// import { useState } from "react";
+// import { FiLoader } from "react-icons/fi";
+// import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+// import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/public/assets/logo.png";
-import axios from "axios";
-
-// ✅ Types
-interface FormProps {
-  name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-  role: string;
-}
-
-interface MessageState {
-  type: "error" | "success";
-  text: string;
-}
+// import axios from "axios";
 
 // ✅ Validation Schema
-const SignupSchema = Yup.object().shape({
-  name: Yup.string().required("Name is required").min(2),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
-  confirm_password: Yup.string()
-    .required("Confirm Password is required")
-    .oneOf([Yup.ref("password")], "Passwords must match"),
-});
+// const SignupSchema = Yup.object().shape({
+//   name: Yup.string().required("Name is required").min(2),
+//   email: Yup.string().email("Invalid email").required("Email is required"),
+//   password: Yup.string().min(6, "At least 6 characters").required("Password is required"),
+//   confirm_password: Yup.string()
+//     .required("Confirm Password is required")
+//     .oneOf([Yup.ref("password")], "Passwords must match"),
+// });
 
 export default function SignupPage() {
-  const router = useRouter();
-  const [message, setMessage] = useState<MessageState | null>(null);
-  const [passwordShow, setPasswordShow] = useState(false);
-  const [confirmPasswordShow, setConfirmPasswordShow] = useState(false);
+  const 
+  // const router = useRouter();
+  // const [message, setMessage] = useState<MessageState | null>(null);
+  // const [passwordShow, setPasswordShow] = useState(false);
+  // const [confirmPasswordShow, setConfirmPasswordShow] = useState(false);
 
-  const formik = useFormik<FormProps>({
-    initialValues: {
-      name: "",
-      email: "",
-      role: "",
-      password: "",
-      confirm_password: "",
-    },
-    validationSchema: SignupSchema,
-    onSubmit: async (values, { resetForm }) => {
-      setMessage(null);
-      try {
-        const res = await axios.post<{ message: string }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/signup`, {
-          name: values.name,
-          email: values.email,
-          password: values.password,
-          role: values.role,
-        });
+  // const formik = useFormik<FormProps>({
+  //   initialValues: {
+  //     name: "",
+  //     email: "",
+  //     role: "",
+  //     password: "",
+  //     confirm_password: "",
+  //   },
+  //   validationSchema: SignupSchema,
+  //   onSubmit: async (values, { resetForm }) => {
+  //     setMessage(null);
+  //     try {
+  //       const res = await axios.post<{ message: string }>(`${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/signup`, {
+  //         name: values.name,
+  //         email: values.email,
+  //         password: values.password,
+  //         role: values.role,
+  //       });
 
-        setMessage({ type: "success", text: res.data.message || "Check your email to verify" });
-        resetForm();
-        router.push("/signin");
-      } catch (err: any) {
-        setMessage({
-          type: "error",
-          text: err?.response?.data?.message || "Registration failed",
-        });
-      }
-    },
-  });
+  //       setMessage({ type: "success", text: res.data.message || "Check your email to verify" });
+  //       resetForm();
+  //       router.push("/signin");
+  //     } catch (err: any) {
+  //       setMessage({
+  //         type: "error",
+  //         text: err?.response?.data?.message || "Registration failed",
+  //       });
+  //     }
+  //   },
+  // });
 
   return (
     <>
@@ -89,7 +75,7 @@ export default function SignupPage() {
       <div className="my-[100px]">
         <div className="container">
           <div className="shadow-2xl max-w-[600px] mx-auto rounded-2xl py-5 px-8">
-            <form onSubmit={formik.handleSubmit} className="grid grid-cols-12 gap-4">
+            {/* <form onSubmit={formik.handleSubmit} className="grid grid-cols-12 gap-4">
               <div className="col-span-12 mb-4">
                 <h2 className="text-2xl font-bold text-center mb-4">Sign Up</h2>
               </div>
@@ -231,7 +217,8 @@ export default function SignupPage() {
                   </Link>
                 </p>
               </div>
-            </form>
+            </form> */}
+            
           </div>
         </div>
       </div>

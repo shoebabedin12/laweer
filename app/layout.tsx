@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Mulish, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
+import NextAuthProvider from "./NextAuthProvider";
 
 const mulish = Mulish({
   display: 'swap',
@@ -32,8 +33,10 @@ export default function RootLayout({
       <body
         className={`${mulish.variable} ${plus_jakarta_sans.variable} font-mulish`}
       >
-        <ToastContainer />
-        {children}
+        <NextAuthProvider>
+          <ToastContainer />
+          {children}
+        </NextAuthProvider>
       </body>
     </html>
   );
