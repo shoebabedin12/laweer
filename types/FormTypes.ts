@@ -18,3 +18,13 @@ export type MessageState = {
   type: 'success' | 'error';
   text: string;
 } | null;
+
+export type FormState =
+  | {
+    errors?: {
+      email?: string[]
+      password?: string[]
+    }
+    message?: string
+  }
+  | undefined

@@ -22,7 +22,6 @@ import logo from "@/public/assets/logo.png";
 // });
 
 export default function SignupPage() {
-  const 
   // const router = useRouter();
   // const [message, setMessage] = useState<MessageState | null>(null);
   // const [passwordShow, setPasswordShow] = useState(false);

@@ -27,12 +27,3 @@ export const signupFormSchema = object({
     .trim(),
 })
 
-export type FormState =
-  | {
-    errors?: {
-      email?: string[]
-      password?: string[]
-    }
-    message?: string
-  }
-  | undefined
