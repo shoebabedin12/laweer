@@ -21,7 +21,7 @@ import logo from "@/public/assets/logo.png";
 //     .oneOf([Yup.ref("password")], "Passwords must match"),
 // });
 
-export default function SignupPage() {
+export default function SignupPage() { 
   // const router = useRouter();
   // const [message, setMessage] = useState<MessageState | null>(null);
   // const [passwordShow, setPasswordShow] = useState(false);
