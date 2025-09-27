@@ -1,4 +1,6 @@
-import { getServerSession } from 'next-auth';
+'use server';
+
+import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ClientLoginForm from '@/components/LoginComponent';

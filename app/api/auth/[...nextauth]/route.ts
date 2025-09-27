@@ -7,7 +7,7 @@ import axios from 'axios';
 interface CustomUser extends NextAuthUser {
   id: string;
   token: string;
-  role?: string; // role ফিল্ড যোগ করা
+  role?: string;
 }
 
 // কাস্টম সেশন ইন্টারফেস
@@ -17,7 +17,7 @@ interface CustomSession extends Session {
     email?: string | null;
     name?: string | null;
     image?: string | null;
-    role?: string; // role ফিল্ড যোগ করা
+    role?: string;
   };
   accessToken?: string;
 }
@@ -27,7 +27,7 @@ interface CustomJWT extends JWT {
   id?: string;
   email?: string | null;
   accessToken?: string;
-  role?: string; // role ফিল্ড যোগ করা
+  role?: string;
 }
 
 // axios রেসপন্স টাইপ
@@ -35,8 +35,9 @@ interface AuthResponse {
   token: string;
   user: {
     id: number;
+    name: string;
     email: string;
-    role: string; // role ফিল্ড যোগ করা
+    role: string;
   };
 }
 
@@ -55,7 +56,7 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const response = await axios.post<AuthResponse>(
-            `${process.env.NEXT_PUBLIC_APP_API_KEY}/auth/login`,
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
               email: credentials.email,
               password: credentials.password,
@@ -67,9 +68,10 @@ export const authOptions: NextAuthOptions = {
           if (user) {
             return {
               id: user.id.toString(),
+              name: user.name,
               email: user.email,
               token,
-              role: user.role, // role ফিল্ড যোগ করা
+              role: user.role,
             } as CustomUser;
           }
           return null;
@@ -85,12 +87,15 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-     async signIn({ user, account, profile }) {
+    async signIn({ user, account, profile }) {
       if (account?.provider === 'google' && profile?.email) {
         try {
-          // Express.js ব্যাকএন্ডে Google ইউজার ডেটা পাঠানো
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+          if (!apiUrl) {
+            throw new Error('NEXT_PUBLIC_API_URL is not defined');
+          }
           const response = await axios.post<AuthResponse>(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/google`,
+            `${apiUrl}/auth/google`,
             {
               email: profile.email,
               name: profile.name,
@@ -100,8 +105,9 @@ export const authOptions: NextAuthOptions = {
 
           const { token, user: backendUser } = response.data;
 
-          // NextAuth ইউজার অবজেক্টে ব্যাকএন্ড থেকে প্রাপ্ত ডেটা যোগ করা
           user.id = backendUser.id.toString();
+          user.name = backendUser.name;
+          user.email = backendUser.email;
           user.token = token;
           user.role = backendUser.role;
 
@@ -111,22 +117,23 @@ export const authOptions: NextAuthOptions = {
           return false;
         }
       }
-      return true; // ক্রেডেনশিয়াল প্রোভাইডারের জন্য
+      return true;
     },
     async jwt({ token, user }: { token: CustomJWT; user?: CustomUser }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.accessToken = user.token;
-        token.role = user.role; // role টোকেনে যোগ করা
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }: { session: CustomSession; token: CustomJWT }) {
       if (session.user) {
         session.user.id = token.id || '';
+        session.user.name = token.name;
         session.user.email = token.email;
-        session.user.role = token.role; // role সেশনে যোগ করা
+        session.user.role = token.role;
         session.accessToken = token.accessToken;
       }
       return session;

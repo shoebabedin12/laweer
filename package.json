@@ -14,8 +14,7 @@
     "@types/next-auth": "^3.13.0",
     "axios": "^1.12.2",
     "date-fns": "^4.1.0",
-    "formik": "^2.4.6",
-    "framer-motion": "^12.23.3",
+    "framer-motion": "^12.23.22",
     "jose": "^6.0.12",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
@@ -33,7 +32,6 @@
     "react-intersection-observer": "^9.16.0",
     "react-toastify": "^11.0.5",
     "styled-components": "^6.1.19",
-    "yup": "^1.6.1",
     "zod": "^4.1.11"
   },
   "devDependencies": {

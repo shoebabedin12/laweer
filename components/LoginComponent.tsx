@@ -1,13 +1,14 @@
+// ClientLoginForm.tsx
 'use client';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { FcGoogle } from 'react-icons/fc';
 
-// Zod স্কিমা
 const loginSchema = z.object({
   email: z.string().email('ইমেইল সঠিক নয়').min(1, 'ইমেইল প্রয়োজন'),
   password: z.string().min(6, 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে'),
@@ -17,6 +18,15 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export default function ClientLoginForm() {
   const [error, setError] = useState<string>('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('error') === 'AccessDenied') {
+      setError('Google লগইন ব্যর্থ: অনুমতি প্রত্যাখ্যান করা হয়েছে');
+    }
+  }, [searchParams]);
+
   const {
     register,
     handleSubmit,
@@ -31,19 +41,30 @@ export default function ClientLoginForm() {
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
-        redirect: false, // রিডিরেক্ট বন্ধ, আমরা ম্যানুয়ালি হ্যান্ডেল করব
+        redirect: false,
       });
 
       if (result?.error) {
         setError('লগইন ব্যর্থ: ইমেইল বা পাসওয়ার্ড সঠিক নয়');
+      } else {
+        router.push('/dashboard');
       }
     } catch (err) {
       setError('কিছু ভুল হয়েছে, আবার চেষ্টা করুন');
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setError('');
+    try {
+      await signIn('google', { callbackUrl: '/users' });
+    } catch (err) {
+      setError('Google লগইন ব্যর্থ হয়েছে, আবার চেষ্টা করুন');
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="mb-4">
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -75,6 +96,20 @@ export default function ClientLoginForm() {
         className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
       >
         {isSubmitting ? 'লগইন হচ্ছে...' : 'লগইন'}
+      </button>
+      <div className="flex items-center justify-center my-4">
+        <div className="border-t border-gray-300 flex-grow"></div>
+        <span className="mx-4 text-gray-500">অথবা</span>
+        <div className="border-t border-gray-300 flex-grow"></div>
+      </div>
+      <button
+        type="button"
+        onClick={handleGoogleLogin}
+        disabled={isSubmitting}
+        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 p-2 rounded hover:bg-gray-100 disabled:bg-gray-200"
+      >
+        <FcGoogle size={24} />
+        Google দিয়ে লগইন করুন
       </button>
     </form>
   );
