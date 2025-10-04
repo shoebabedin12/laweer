@@ -10,7 +10,7 @@ import {
   query,
   serverTimestamp,
 } from "firebase/firestore";
-import { MessageType } from "@/types/DataTypes";
+import { MessageType } from "@/app/types/DataTypes";
 
 export default function ChatBox({
   currentUserId,

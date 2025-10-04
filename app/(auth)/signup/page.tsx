@@ -1,22 +1,17 @@
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import ClientSignupForm from '@/components/ClientSignupForm';
-
-export const dynamic = 'force-dynamic';
+import ClientSignupForm from '@/app/components/ClientSignupForm';
 
 export default async function SignupPage() {
-  const session = await getServerSession(authOptions);
-  if (session) {
-    const role = session.user?.role;
-    if (role === 'admin') {
-      redirect('/admin');
-    } else if (role === 'lawyer') {
-      redirect('/lawyer');
-    } else {
-      redirect('/users');
-    }
-  }
+  // const session = await getServerSession(authOptions);
+  // if (session) {
+  //   const role = session.user?.role;
+  //   if (role === 'admin') {
+  //     redirect('/admin');
+  //   } else if (role === 'lawyer') {
+  //     redirect('/lawyer');
+  //   } else {
+  //     redirect('/users');
+  //   }
+  // }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

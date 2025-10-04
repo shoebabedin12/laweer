@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarProps } from "@/types/DataTypes";
+import { SidebarProps } from "@/app/types/DataTypes";
 // import { logout } from "@/utility/logout";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

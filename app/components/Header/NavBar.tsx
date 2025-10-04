@@ -1,7 +1,7 @@
 "use client";
 
-import { navbar } from "@/data/navbar-data";
-import logo from "../../public/assets/logo.png";
+import { navbar } from "@/app/data/navbar-data";
+import logo from "@/public/assets/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,10 +9,8 @@ import { useEffect, useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
-import { useSession, signOut } from "next-auth/react";
 
 const NavBar = () => {
-  const { data: session, status } = useSession(); // NextAuth সেশন হুক
   const router = usePathname();
   const [scrollPosition, setPosition] = useState({ scrollY: 0 });
   const [menuShow, setMenuShow] = useState(false);
@@ -69,20 +67,20 @@ const NavBar = () => {
               </ul>
             </div>
             <div className="flex items-center justify-end gap-4">
-              {status === "authenticated" ? (
-                <div className="flex items-center gap-4">
-                  <span className="text-[var(--color-text)] text-sm lg:text-[18px]">
+              {/* {status === "authenticated" ? ( */}
+                {/* <div className="flex items-center gap-4"> */}
+                  {/* <span className="text-[var(--color-text)] text-sm lg:text-[18px]">
                     {session?.user?.name || "User"} (
                     {session?.user?.role || "Unknown"})
-                  </span>
-                  <button
+                  </span> */}
+                  {/* <button
                     onClick={() => signOut({ callbackUrl: "/signin" })}
                     className="btn rounded-full font-bold bg-[#0EA106] text-white py-2 lg:py-[15px] px-2 lg:px-[30px] text-sm lg:text-[18px]"
                   >
                     Logout
                   </button>
-                </div>
-              ) : (
+                </div> */}
+              {/* ) : ( */}
                 <span className="btn rounded-full font-bold bg-[#0EA106] text-white py-2 lg:py-[15px] px-2 lg:px-[30px] text-sm lg:text-[18px]">
                   <Link
                     href="/signup"
@@ -98,7 +96,7 @@ const NavBar = () => {
                     Login
                   </Link>
                 </span>
-              )}
+              {/* )} */}
               <div className="hamburger block lg:hidden">
                 <RxHamburgerMenu
                   className="text-[30px] text-[var(--color-primary)] cursor-pointer"
@@ -139,7 +137,7 @@ const NavBar = () => {
               </Link>
             </li>
           ))}
-          {status === "authenticated" ? (
+          {/* {status === "authenticated" ? (
             <li>
               <button
                 onClick={() => signOut({ callbackUrl: "/signin" })}
@@ -148,7 +146,7 @@ const NavBar = () => {
                 Logout
               </button>
             </li>
-          ) : (
+          ) : ( */}
             <>
               <li>
                 <Link
@@ -169,7 +167,7 @@ const NavBar = () => {
                 </Link>
               </li>
             </>
-          )}
+          {/* )} */}
         </ul>
       </motion.div>
     </>

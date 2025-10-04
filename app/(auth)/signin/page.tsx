@@ -1,23 +1,7 @@
-'use server';
+import ClientLoginForm from '@/app/components/LoginComponent';
 
-import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import ClientLoginForm from '@/components/LoginComponent';
 
-// SSR: সেশন চেক করুন
 export default async function LoginPage() {
-  const session = await getServerSession(authOptions);
-  if (session) {
-    const role = session.user?.role;
-    if (role === 'admin') {
-      redirect('/admin');
-    } else if (role === 'lawyer') {
-      redirect('/lawyer');
-    } else {
-      redirect('/users');
-    }
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

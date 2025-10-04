@@ -1,4 +1,4 @@
-import Lawyers from "@/components/Lawyers";
+import Lawyers from "@/app/components/Lawyers";
 import React from "react";
 
 const LawyersProfile = () => {

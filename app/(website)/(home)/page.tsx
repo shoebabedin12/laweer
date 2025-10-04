@@ -1,6 +1,6 @@
 import Banner from "./Banner";
-import Counter from "@/components/Counter";
-import Lawyers from "@/components/Lawyers";
+import Counter from "@/app/components/Counter";
+import Lawyers from "@/app/components/Lawyers";
 
 export default function Home() {
 

@@ -1,5 +1,5 @@
-import RoleProtectedLayout from "@/components/auth/RoleProtectedLayout";
-import { LayoutProps } from "@/types/LayoutTypes";
+import RoleProtectedLayout from "@/app/components/auth/RoleProtectedLayout";
+import { LayoutProps } from "@/app/types/LayoutTypes";
 
 const Layout = ({ children }: LayoutProps)=> {
   return (

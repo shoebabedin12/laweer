@@ -3,7 +3,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { getTodayAvailabilityStatus } from "@/utility/avaiabilityCheck";
+import { getTodayAvailabilityStatus } from "@/app/utility/avaiabilityCheck";
 import { toast } from "react-toastify";
 // import { useAuth } from "@/context/AuthContext"; // ✅ Custom Auth Context
 import { useRouter } from "next/navigation";

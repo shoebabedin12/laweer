@@ -7,7 +7,7 @@ import { FaYoutubeSquare } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { navbar } from "@/data/navbar-data";
+import { navbar } from "@/app/data/navbar-data";
 
 const Footer = () => {
   const router = usePathname();

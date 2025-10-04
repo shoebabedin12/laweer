@@ -4,7 +4,7 @@ import { BsBellFill } from "react-icons/bs";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FiMenu } from "react-icons/fi";
-import { SidebarProps } from "@/types/DataTypes";
+import { SidebarProps } from "@/app/types/DataTypes";
 // import { logout } from "@/utility/logout";
 import { useRouter } from "next/navigation";
 import Link from "next/link";

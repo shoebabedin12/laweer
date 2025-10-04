@@ -2,7 +2,7 @@
  
 "use client";
 
-import { LawyeerDetailsPropTypes } from "@/types/DataTypes";
+import { LawyeerDetailsPropTypes } from "@/app/types/DataTypes";
 import Image from "next/image";
 import React, { useState } from "react";
 import LawyerModal from "./LawyerModal";

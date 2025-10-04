@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LawyeersPropTypes } from "@/types/DataTypes";
+import { LawyeersPropTypes } from "@/app/types/DataTypes";
 import LawyerCard from "./LawyerCard";
 import Link from "next/link";
 

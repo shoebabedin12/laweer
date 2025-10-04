@@ -1,26 +1,26 @@
-import type { Metadata } from "next";
-import { Mulish, Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
-import { ToastContainer } from "react-toastify";
-import NextAuthProvider from "./NextAuthProvider";
+import type { Metadata } from 'next';
+import { Mulish, Plus_Jakarta_Sans } from 'next/font/google';
+import './globals.css';
+import { ToastContainer } from 'react-toastify';
+import AuthProviders from '@/app/context/AuthProviders';
 
 const mulish = Mulish({
   display: 'swap',
-  subsets: ["latin"],
-  variable: "--font-mulish",
+  subsets: ['latin'],
+  variable: '--font-mulish',
   preload: true,
 });
 
 const plus_jakarta_sans = Plus_Jakarta_Sans({
   display: 'swap',
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta-sans",
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta-sans',
   preload: true,
 });
 
 export const metadata: Metadata = {
-  title: "Lawyer",
-  description: "",
+  title: 'Lawyer',
+  description: '',
 };
 
 export default function RootLayout({
@@ -33,10 +33,10 @@ export default function RootLayout({
       <body
         className={`${mulish.variable} ${plus_jakarta_sans.variable} font-mulish`}
       >
-        <NextAuthProvider>
+        <AuthProviders>
           <ToastContainer />
           {children}
-        </NextAuthProvider>
+        </AuthProviders>
       </body>
     </html>
   );
