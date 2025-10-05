@@ -1,39 +1,41 @@
 "use client";
 
 import React from "react";
-import logo01 from "./../public/assets/success-doctor.png";
-import logo03 from "./../public/assets/success-patients.png";
-import logo04 from "./../public/assets/success-staffs.png";
-import CountUp from "react-countup";
-import Image from "next/image";
-import { useInView } from "react-intersection-observer";
+// import logo01 from "./../public/assets/success-doctor.png";
+// import logo03 from "./../public/assets/success-patients.png";
+// import logo04 from "./../public/assets/success-staffs.png";
+// import CountUp from "react-countup";
+// import Image from "next/image";
+// import { useInView } from "react-intersection-observer";
 
 const Counter = () => {
-  const { ref, inView } = useInView({
-    triggerOnce: true, // only trigger once
-    threshold: 0.3,     // 30% visible to trigger
-  });
-  const data = [
-    {
-      id: 0,
-      img: logo01,
-      count: 199,
-      title: 'Total Lawyers'
-    },{
-      id: 1,
-      img: logo03,
-      count: 1900,
-      title: 'Cases Initiated'
-    },{
-      id: 2,
-      img: logo04,
-      count: 300,
-      title: 'Total Staffs'
-    },
-  ]
+  // const { ref, inView } = useInView({
+  //   triggerOnce: true, // only trigger once
+  //   threshold: 0.3,     // 30% visible to trigger
+  // });
+  // const data = [
+  //   {
+  //     id: 0,
+  //     img: logo01,
+  //     count: 199,
+  //     title: 'Total Lawyers'
+  //   },{
+  //     id: 1,
+  //     img: logo03,
+  //     count: 1900,
+  //     title: 'Cases Initiated'
+  //   },{
+  //     id: 2,
+  //     img: logo04,
+  //     count: 300,
+  //     title: 'Total Staffs'
+  //   },
+  // ]
 
   return (
-    <div className="mb-[100px]" ref={ref}>
+    <>
+    Counter component
+    {/* <div className="mb-[100px]" ref={ref}>
       <div className="text-center">
         <h1 className="text-[40px] font-extrabold">We Provide Best Law Services</h1>
         <p>
@@ -51,7 +53,8 @@ const Counter = () => {
           <p className="text-xl font-medium text-gray-500">{item.title}</p>
         </div>)}
       </div>
-    </div>
+    </div> */}
+    </>
   );
 };
 

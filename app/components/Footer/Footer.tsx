@@ -1,11 +1,11 @@
 "use client";
-import logoFooter from "../../public/assets/logo-footer.png";
+// import logoFooter from "../../public/assets/logo-footer.png";
 import { FaFacebook } from "react-icons/fa";
 import { BsTwitterX } from "react-icons/bs";
 import { FaLinkedin } from "react-icons/fa6";
 import { FaYoutubeSquare } from "react-icons/fa";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { navbar } from "@/app/data/navbar-data";
 
@@ -17,7 +17,7 @@ const Footer = () => {
       <div className="container">
         <div className="flex flex-col items-center">
           <Link href="/" className="flex items-center gap-4 ">
-            <Image className="" src={logoFooter} alt="" />
+            {/* <Image className="" src={logoFooter} alt="" /> */}
             <h1 className="lg:text-3xl lg:font-extrabold text-2xl font-bold">
               Law.BD
             </h1>

@@ -7,7 +7,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useUser } from "@/context/UserContext";
 
 interface Lawyer {
   id: string;
@@ -36,7 +35,6 @@ export default function AppointmentBooking() {
   const [error, setError] = useState("");
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  const { userId } = useUser();
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Fetch lawyers from backend API
@@ -91,7 +89,6 @@ export default function AppointmentBooking() {
 
     try {
       await axios.post(`${API_BASE}/appointments`, {
-        userId,
         lawyerId: selectedLawyer.id,
         date: selectedDate,
         time,
